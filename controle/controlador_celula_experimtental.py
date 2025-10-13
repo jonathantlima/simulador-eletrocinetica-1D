@@ -44,7 +44,7 @@ class ControladorCelulaExperimental():
     def mostra_celulas(self):
         if self.__celulas:
             self.__tela.imprime_mensagem("--- Lista de Células Experimentais ---")
-            print("--- Código --- Comprimento (cm) ---")
+            self.__tela.imprime_mensagem("--- Código --- Comprimento (cm) ---")
             for celula in self.__celulas:
                 self.__tela.imprime_mensagem(f"--- {celula.codigo} --- {celula.comprimento}")
 
@@ -53,10 +53,10 @@ class ControladorCelulaExperimental():
             if (celula.codigo == codigo):
                 return celula
         else:
-            print("Célula não cadastrada ou código incorreto.\n")
+            self.__tela.imprime_mensagem("Célula não cadastrada ou código incorreto.\n")
 
     def cadastra_celula(self):
-        print("--- Nova Célula Experimental ---")
+        self.__tela.imprime_mensagem("--- Nova Célula Experimental ---")
         codigo = input("Código da nova célula: ")
         material = input("Material de fabricação: ")
         comprimento = float(input("Comprimento da célula (cm): "))
@@ -66,7 +66,7 @@ class ControladorCelulaExperimental():
                                     material=material,
                                     comprimento=comprimento,
                                     diametro=diametro)
-        print(f"Nova célula experimental cadastrada (cód: {codigo})\n")        
+        self.__tela.imprime_mensagem(f"Nova célula experimental cadastrada (cód: {codigo})\n")        
         self.__celulas.append(celula)
         return celula
     

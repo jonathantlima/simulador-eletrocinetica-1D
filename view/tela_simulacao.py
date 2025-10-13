@@ -49,17 +49,6 @@ class TelaSimulacao():
     def coleta_codigo_celula(self):
         codigo = input("Digite o código da célula experimental deseja: ")
         return codigo
-    
-    '''def coleta_dados_condicoes(self):
-        concentracao_inicial = float(input("Defina a concetração inicial (mg/L) da espécie química no solo: "))
-        gradiente_eletrico = float(input("Defina o gradiente elétrico da simulação: "))
-        gradiente_hidraulico = float(input("Defina o gradiente hidráulico da simulação: "))
-        concentracao_reservatorio = float(input("Defina a concentração no reservatório da célula: "))
-
-        return {"concentracao_inicial": concentracao_inicial,
-                "gradiente_eletrico": gradiente_eletrico,
-                "gradiente_hidraulico": gradiente_hidraulico,
-                "concentracao_reservatorio": concentracao_reservatorio}'''
 
     def coleta_codigo_condicoes(self):
         codigo = input("Digite o código da condição de simulação: ")
