@@ -53,11 +53,17 @@ class ControladorSistema():
         }
         
         while True:
-            opcao = self.__tela.menu()
-            if opcao in opcoes:
-                opcoes[opcao]()
-            else:
-                self.__tela.imprime_mensagem("Opção inválida!")
+            try:
+                opcao = self.__tela.menu()
+                if opcao in opcoes:
+                    try:
+                        opcoes[opcao]()
+                    except Exception as e:
+                        self.__tela.imprime_mensagem(f"Erro ao executar a opção: {e}")
+                else:
+                    self.__tela.imprime_mensagem("Opção inválida.")
+            except Exception as e:
+                self.__tela.imprime_mensagem(f"Erro inesperado no menu: {e}")
 
     
     def inicializa_sistema(self):

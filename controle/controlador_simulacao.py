@@ -15,15 +15,22 @@ class ControladorSimulacao():
         opcoes = {1: self.cria_simulacao,
                   2: self.lista_simulacoes,
                   3: self.plota_grafico,
+                  4: self.gerar_relatorio,
                   0: self.retornar
         }
     
         while True:
-            opcao = self.__tela.mostra_menu()
-            if opcao in opcoes:
-                opcoes[opcao]()
-            else:
-                self.__tela.imprime_mensagem("Opção inválida.")
+            try:
+                opcao = self.__tela.mostra_menu()
+                if opcao in opcoes:
+                    try:
+                        opcoes[opcao]()
+                    except Exception as e:
+                        self.__tela.imprime_mensagem(f"Erro ao executar a opção: {e}")
+                else:
+                    self.__tela.imprime_mensagem("Opção inválida.")
+            except Exception as e:
+                self.__tela.imprime_mensagem(f"Erro inesperado no menu: {e}")
     
     def cria_simulacao(self):
         # coleta os dados elementares da simulação
@@ -97,3 +104,52 @@ class ControladorSimulacao():
         
     def retornar(self):
         self.__controlador_sistema.abre_tela()
+    
+    def gerar_relatorio(self):
+
+        # Será usada para armazenar as durações das simulações e calcular estatísticas
+        duracao_dict = dict()
+        usuarios_dict = dict()
+        solos_dict = dict()
+        celulas_dict = dict()
+        especies_dict = dict()
+        concentracao_inicial = dict()   # coluna, flushing
+
+        for simulacao in self.__simulacoes:
+            duracao_dict[simulacao.duracao] = duracao_dict.get(simulacao.duracao, 0) + 1
+            usuarios_dict[simulacao.usuario.matricula] = usuarios_dict.get(simulacao.usuario.matricula, 0) + 1
+            solos_dict[simulacao.solo.codigo] = solos_dict.get(simulacao.solo.codigo, 0) + 1
+            celulas_dict[simulacao.celula_experimental.codigo] = celulas_dict.get(simulacao.celula_experimental.codigo, 0) + 1
+            especies_dict[simulacao.especie_quimica.codigo] = especies_dict.get(simulacao.especie_quimica.codigo, 0) + 1
+            concentracao_inicial[simulacao.condicoes_do_problema.concentracao_inicial] = concentracao_inicial.get(simulacao.condicoes_do_problema.concentracao_inicial, 0) + 1
+        
+        # Início do conteúdo do relatório
+        linhas = []
+        linhas.append("************ RELATÓRIO DE SIMULAÇÕES ***************\n")
+
+        def formatar_secao(titulo, dicionario, unidade=None):
+            linhas.append(f"\n--- {titulo} ---\n")
+            for chave, valor in dicionario.items():
+                unidade_str = f" {unidade}" if unidade else ""
+                linhas.append(f"{str(chave)}: {valor} simulação(ões){unidade_str}")
+            linhas.append("\n")
+
+        # Adiciona todas as seções ao relatório
+        formatar_secao("Duração das Simulações", duracao_dict, "s")
+        formatar_secao("Simulações por Usuário (matrícula)", usuarios_dict)
+        formatar_secao("Simulações por Solo", solos_dict)
+        formatar_secao("Simulações por Célula Experimental", celulas_dict)
+        formatar_secao("Simulações por Espécie Química", especies_dict)
+        formatar_secao("Concentração Inicial (mg/L)", concentracao_inicial)
+
+        # Salvando o arquivo
+        caminho_arquivo = "relatorio_simulacoes.txt"
+        try:
+            with open(caminho_arquivo, "w", encoding="utf-8") as f:
+                for linha in linhas:
+                    f.write(linha + "\n")
+            print(f"Relatório gerado com sucesso em: {caminho_arquivo}")
+        except Exception as e:
+            print(f"Erro ao gerar relatório: {e}")
+
+

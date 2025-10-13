@@ -16,23 +16,42 @@ class ControladorUsuario():
         }
     
         while True:
-            opcao = self.__tela.mostra_menu()
-            if opcao in opcoes:
-                opcoes[opcao]()
-            else:
-                self.__tela.imprime_mensagem("Opção inválida.")
+            try:
+                opcao = self.__tela.mostra_menu()
+                if opcao in opcoes:
+                    try:
+                        opcoes[opcao]()
+                    except Exception as e:
+                        self.__tela.imprime_mensagem(f"Erro ao executar a opção: {e}")
+                else:
+                    self.__tela.imprime_mensagem("Opção inválida.")
+            except Exception as e:
+                self.__tela.imprime_mensagem(f"Erro inesperado no menu: {e}")
     
     def novo_usuario(self):
-        dados = self.__tela.coleta_dados()
-        novo_usuario = Usuario(dados["nome"],
-                               dados["email"],
-                               dados["telefone"],
-                               dados["departamento"],
-                               dados["matricula"])
-        print(f"Novo usuário cadastrado (Dept. {dados["departamento"]})\n")
-        
-        self.__usuarios.append(novo_usuario)
-        return novo_usuario
+        try:
+            dados = self.__tela.coleta_dados()
+
+            # Verifica se já existe usuário com a mesma matrícula
+            if any(u.matricula == dados["matricula"] for u in self.__usuarios):
+                self.__tela.imprime_mensagem("Erro: Matrícula já cadastrada.\n")
+                return
+
+            novo_usuario = Usuario(
+                dados["nome"],
+                dados["email"],
+                dados["telefone"],
+                dados["departamento"],
+                dados["matricula"]
+            )
+            self.__usuarios.append(novo_usuario)
+            print(f"Novo usuário cadastrado (Dept. {dados['departamento']})\n")
+            return novo_usuario
+
+        except KeyError as e:
+            self.__tela.imprime_mensagem(f"Dado ausente: {e}")
+        except Exception as e:
+            self.__tela.imprime_mensagem(f"Erro ao cadastrar usuário: {e}")
     
     def altera_usuario(self):
         self.lista_usuarios()
