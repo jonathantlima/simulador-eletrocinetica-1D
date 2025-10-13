@@ -23,4 +23,13 @@ Este sistema simula o transporte de uma espécie química no solo, em uma dimens
 
 ## 🗂️ Estrutura do Projeto (MVC)
 
+## 🔁 Histórico do Projeto
+
+Este sistema foi reescrito do zero após dificuldades com a versão anterior, que apresentava problemas estruturais e de funcionamento.
+
+Você pode acessar o repositório original (versão descontinuada) aqui:
+
+👉 [Repositório Antigo no GitHub]([https://github.com/jonathantlima/trabalho01_dsoo])
+
+
 
