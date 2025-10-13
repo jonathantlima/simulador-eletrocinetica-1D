@@ -1,0 +1,38 @@
+************ RELATÓRIO DE SIMULAÇÕES ***************
+
+
+--- Duração das Simulações ---
+
+96: 1 simulação(ões) s
+
+
+
+--- Simulações por Usuário (matrícula) ---
+
+25100000: 1 simulação(ões)
+
+
+
+--- Simulações por Solo ---
+
+SOLO-100: 1 simulação(ões)
+
+
+
+--- Simulações por Célula Experimental ---
+
+CEL-100: 1 simulação(ões)
+
+
+
+--- Simulações por Espécie Química ---
+
+EQ-100: 1 simulação(ões)
+
+
+
+--- Concentração Inicial (mg/L) ---
+
+0.0: 1 simulação(ões)
+
+
