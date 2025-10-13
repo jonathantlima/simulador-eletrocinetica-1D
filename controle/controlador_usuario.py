@@ -7,6 +7,10 @@ class ControladorUsuario():
         self.__tela = TelaUsuario()
         self.__usuarios = []
         self.__controlador_sistema = controlador_sistema
+
+    @property
+    def usuarios(self):
+        return self.__usuarios
     
     def abre_tela(self):
         opcoes = {1: self.novo_usuario,

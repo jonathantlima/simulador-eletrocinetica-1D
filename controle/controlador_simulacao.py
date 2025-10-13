@@ -33,22 +33,88 @@ class ControladorSimulacao():
                 self.__tela.imprime_mensagem(f"Erro inesperado no menu: {e}")
     
     def cria_simulacao(self):
+
+        # VALIDA A POSSIBILIDADE DE CRIAR UMA SIMULAÇÃO
+        try:
+            usuarios = self.__controlador_sistema.controlador_usuario.usuarios
+            solos = self.__controlador_sistema.controlador_solo.solos
+            especies = self.__controlador_sistema.controlador_especie_quimica.especies
+            celulas = self.__controlador_sistema.controlador_celula_experimental.celulas
+            condicoes = self.__controlador_sistema.controlador_condicoes.condicoes
+
+            entidades = {
+                "Usuários": usuarios,
+                "Solos": solos,
+                "Espécies": especies,
+                "Células": celulas,
+                "Condições": condicoes
+            }
+
+            mensagens = []
+            for nome_entidade, lista_entidade in entidades.items():
+                if not lista_entidade:
+                    mensagens.append(f"{nome_entidade} não cadastrados(as).")
+
+            if mensagens:
+                for msg in mensagens:
+                    self.__tela.imprime_mensagem(msg)
+                self.__tela.imprime_mensagem("Simulação abortada. Retornando...")
+                self.retornar()
+                return
+
+        except Exception as e:
+            self.__tela.imprime_mensagem(f"Erro ao criar simulação: {e}")
+        
         # coleta os dados elementares da simulação
         codigo_simulacao, duracao = self.__tela.coleta_dados()
 
-        # define o usuário inicial
-        self.__tela.imprime_mensagem("--- Registra usuário ---")
-        self.__controlador_sistema.controlador_usuario.lista_usuarios()
-        matricula = self.__tela.coleta_matricula_usuario()
-        usuario = self.__controlador_sistema.controlador_usuario.retorna_usuario(matricula)
+        # DEFINE USUÁRIO
+        try:
+            # Verifica se há usuários cadastrados
+            usuarios = self.__controlador_sistema.controlador_usuario.usuarios
+            if not usuarios:
+                self.__tela.imprime_mensagem("Nenhum usuário cadastrado. Simulação cancelada.")
+                return
 
-        # define o solo que será usado
-        self.__tela.imprime_mensagem("--- Seleção do solo ---")
-        self.__controlador_sistema.controlador_solo.mostra_solos()
-        codigo_solo = self.__tela.coleta_codigo_solo()
-        solo = self.__controlador_sistema.controlador_solo.retorna_solo(codigo_solo)
+            # Lista usuários
+            self.__controlador_sistema.controlador_usuario.lista_usuarios()
 
-        # define a espécie química que será analisada
+            # Loop para garantir matrícula válida
+            usuario = None
+            while usuario is None:
+                matricula = self.__tela.coleta_matricula_usuario()
+                usuario = self.__controlador_sistema.controlador_usuario.retorna_usuario(matricula)
+                if usuario is None:
+                    self.__tela.imprime_mensagem("Matrícula inválida. Tente novamente.")
+            self.__tela.imprime_mensagem(f"Usuário selecionado: {usuario.nome}\n")
+
+        except Exception as e:
+            self.__tela.imprime_mensagem(f"Erro ao selecionar usuário: {e}")
+            return
+
+        # DEFINE O SOLO QUE SERÁ USADO
+        try:
+            solos = self.__controlador_sistema.controlador_solo.solos
+            if not solos:
+                self.__tela.imprime_mensagem("Nenhum solo cadastrado. Simulação cancelada.")
+                return
+            
+            # Lista os solos cadastrados
+            self.__controlador_sistema.controlador_solo.mostra_solos()
+
+            solo = None
+            while solo is None:
+                codigo_solo = self.__tela.coleta_codigo_solo()
+                solo = self.__controlador_sistema.controlador_solo.retorna_solo(codigo_solo)
+                if solo is None:
+                    self.__tela.imprime_mensagem("Código inválido. Tente novamente.")
+            self.__tela.imprime_mensagem(f"Solo selecionado: {solo.codigo}\n")
+        
+        except Exception as e:
+            self.__tela.imprime_mensagem(f"Erro ao selecionar solo: {e}")
+            return
+
+        # DEFINE A ESPÉCIE QUÍMICA QUE SERÁ SIMULADA
         self.__tela.imprime_mensagem("--- Seleção da espécie química ---")
         self.__controlador_sistema.controlador_especie_quimica.mostra_especies()
         codigo_especie = self.__tela.coleta_codigo_especie_quimica()

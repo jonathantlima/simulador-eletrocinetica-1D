@@ -9,6 +9,10 @@ class ControladorCondicoes():
         self.__controlador_sistema = controlador_sistema
         self.__condicoes = []
     
+    @property
+    def condicoes(self):
+        self.__condicoes
+    
     def abre_tela(self):
         opcoes = {1: self.cadastra_condicoes,
                   2: self.retorna_condicao,

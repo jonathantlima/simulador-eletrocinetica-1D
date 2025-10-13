@@ -11,6 +11,10 @@ class ControladorSolo():
         self.__tela = TelaSolo()
         self.__controlador_sistema = controlador_sistema
     
+    @property
+    def solos(self):
+        return self.__solos
+    
     def abre_tela(self):
         opcoes = {1: self.cadastra_solo,
                   2: self.retorna_solo,

@@ -11,6 +11,10 @@ class ControladorEspecieQuimica():
         self.__tela = TelaEspecieQuimica()
         self.__especies = []
     
+    @property
+    def especies(self):
+        return self.__especies
+    
     def abre_tela(self):
         opcoes = {1: self.cadastra_especie_quimica,
                   2: self.retorna_especie,

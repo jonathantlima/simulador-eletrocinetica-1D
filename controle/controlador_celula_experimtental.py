@@ -9,6 +9,10 @@ class ControladorCelulaExperimental():
         self.__tela = TelaCelulas()
         self.__celulas = []
     
+    @property
+    def celulas(self):
+        return self.__celulas
+    
     def abre_tela(self):
         opcoes = {1: self.cadastra_celula,
                   2: self.retorna_celula,
