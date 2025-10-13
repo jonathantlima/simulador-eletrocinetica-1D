@@ -19,6 +19,7 @@ class ControladorSolo():
         opcoes = {1: self.cadastra_solo,
                   2: self.retorna_solo,
                   3: self.mostra_solos,
+                  4: self.deleta_solo,
                   0: self.retornar
         }
     
@@ -107,3 +108,18 @@ class ControladorSolo():
     
     def retornar(self):
         self.__controlador_sistema.abre_tela()
+    
+    def deleta_solo(self):
+        try:
+            if self.solos is not None:
+                self.mostra_solos()
+            else:
+                self.__tela.imprime_mensagem("Nenhum solo cadastrado.")
+            
+            codigo_solo = self.__tela.coleta_codigo()
+            solo = self.retorna_solo(codigo_solo)
+            self.__solos.remove(solo)
+            self.__tela.imprime_mensagem(f"Solo ({solo.codigo}) excluído com sucesso.")
+        
+        except Exception as e:
+            self.__tela.imprime_mensagem(f"Erro ao tentar excluir o solo {solo.codigo}.")

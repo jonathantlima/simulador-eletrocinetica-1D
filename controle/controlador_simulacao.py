@@ -1,7 +1,6 @@
 from view.tela_simulacao import TelaSimulacao
 from modelo.usuario import Usuario
 from modelo.simulacao import Simulacao
-from datetime import date
 
 
 class ControladorSimulacao():
@@ -70,12 +69,6 @@ class ControladorSimulacao():
 
         # DEFINE USUÁRIO
         try:
-            # Verifica se há usuários cadastrados
-            usuarios = self.__controlador_sistema.controlador_usuario.usuarios
-            if not usuarios:
-                self.__tela.imprime_mensagem("Nenhum usuário cadastrado. Simulação cancelada.")
-                return
-
             # Lista usuários
             self.__controlador_sistema.controlador_usuario.lista_usuarios()
 
@@ -94,11 +87,6 @@ class ControladorSimulacao():
 
         # DEFINE O SOLO QUE SERÁ USADO
         try:
-            solos = self.__controlador_sistema.controlador_solo.solos
-            if not solos:
-                self.__tela.imprime_mensagem("Nenhum solo cadastrado. Simulação cancelada.")
-                return
-            
             # Lista os solos cadastrados
             self.__controlador_sistema.controlador_solo.mostra_solos()
 
@@ -115,22 +103,52 @@ class ControladorSimulacao():
             return
 
         # DEFINE A ESPÉCIE QUÍMICA QUE SERÁ SIMULADA
-        self.__tela.imprime_mensagem("--- Seleção da espécie química ---")
-        self.__controlador_sistema.controlador_especie_quimica.mostra_especies()
-        codigo_especie = self.__tela.coleta_codigo_especie_quimica()
-        especie_quimica = self.__controlador_sistema.controlador_especie_quimica.retorna_especie(codigo_especie)
+        try:
+            self.__controlador_sistema.controlador_especie_quimica.mostra_especies()
 
-        # define a célula experimental que será simulada
-        self.__tela.imprime_mensagem("--- Seleção da célula experimental ---")
-        self.__controlador_sistema.controlador_celula_experimental.mostra_celulas()
-        codigo_celula = self.__tela.coleta_codigo_celula()
-        celula_experimental = self.__controlador_sistema.controlador_celula_experimental.retorna_celula(codigo_celula)
+            especie_quimica = None
+            while especie_quimica is None:
+                codigo_especie = self.__tela.coleta_codigo_especie_quimica()
+                especie_quimica = self.__controlador_sistema.controlador_especie_quimica.retorna_especie(codigo_especie)
+                if especie_quimica is None:
+                    self.__tela.imprime_mensagem("Código inválido, tente novamente.")
+            self.__tela.imprime_mensagem(f"Espécie química selecionda: {especie_quimica.codigo}")
+        
+        except Exception as e:
+            self.__tela.imprime_mensagem(f"Erro ao selecionar espécie química: {e}")
+            return
 
-        # define as condicoes iniciais e de contorno do problema
-        self.__tela.imprime_mensagem("--- Definição das condições iniciais e de contorno ---")
-        self.__controlador_sistema.controlador_condicoes.mostra_condicoes()
-        codigo_condicao = self.__tela.coleta_codigo_condicoes()
-        condicao = self.__controlador_sistema.controlador_condicoes.retorna_condicao(codigo_condicao)
+        # DEFINE A CÉLULA EXPERIMENTAL QUE SERÁ SIMULADA
+        try:
+            self.__controlador_sistema.controlador_celula_experimental.mostra_celulas()
+
+            celula_experimental = None
+            while celula_experimental is None:
+                codigo_celula = self.__tela.coleta_codigo_celula()
+                celula_experimental = self.__controlador_sistema.controlador_celula_experimental.retorna_celula(codigo_celula)
+                if celula_experimental is None:
+                    self.__tela.imprime_mensagem("Código inválido, tente novamente.")
+            self.__tela.imprime_mensagem(f"Célula experimental selecionda: {celula_experimental.codigo}")
+        
+        except Exception as e:
+            self.__tela.imprime_mensagem(f"Erro ao selecionar célula experimental: {e}")
+            return
+
+        # DEFINE AS CONDIÇÕES INICIAIS E DE CONTORNO DO PROBLEMA
+        try:
+            self.__controlador_sistema.controlador_condicoes.mostra_condicoes()
+
+            condicao = None
+            while condicao is None:
+                codigo_condicao = self.__tela.coleta_codigo_condicoes()
+                condicao = self.__controlador_sistema.controlador_condicoes.retorna_condicao(codigo_condicao)
+                if condicao is None:
+                    self.__tela.imprime_mensagem("Código inválido, tente novamente.")
+            self.__tela.imprime_mensagem(f"Condições iniciais e de contorno selecionadas: {condicao.codigo}")
+        
+        except Exception as e:
+            self.__tela.imprime_mensagem(f"Erro ao selecionar condições iniciais e de contorno: {e}")
+            return
 
         # CRIA A SIMULAÇÃO
         simulacao = Simulacao(usuario,
