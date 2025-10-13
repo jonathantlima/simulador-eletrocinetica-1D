@@ -1,0 +1,99 @@
+from view.tela_solo import TelaSolo
+from modelo.areia import Areia
+from modelo.argila import Argila
+from modelo.silte import Silte
+
+
+class ControladorSolo():
+
+    def __init__(self, controlador_sistema):
+        self.__solos = []
+        self.__tela = TelaSolo()
+        self.__controlador_sistema = controlador_sistema
+    
+    def abre_tela(self):
+        opcoes = {1: self.cadastra_solo,
+                  2: self.retorna_solo,
+                  3: self.mostra_solos,
+                  0: self.retornar
+        }
+    
+        while True:
+            opcao = self.__tela.mostra_menu()
+            if opcao in opcoes:
+                opcoes[opcao]()
+            else:
+                self.__tela.imprime_mensagem("Opção inválida.")
+    
+    @property
+    def solos(self):
+        return self.__solos
+    
+    @property
+    def controlador_sistema(self):
+        return self.__controlador_sistema
+    
+    def mostra_solos(self):
+        if self.__solos:
+            self.__tela.imprime_mensagem("--- Lista de Solos ---")
+            for solo in self.__solos:
+                self.__tela.imprime_mensagem("Código: ", solo.codigo, "Origem: ", solo.origem, "ke: ", solo.permeabilidade_eletroosmotica)
+        else:
+            self.__tela.imprime_mensagem("Nenhum solo cadastrado.\n")
+    
+    def retorna_solo(self, codigo):
+        for solo in self.__solos:
+            if (solo.codigo == codigo):
+                return solo
+        else:
+            self.__tela.imprime_mensagem("Solo não cadastrado ou código incorreto.")
+    
+    def cadastra_solo(self):
+        print("--- Novo Cadastro de Solo ---")
+        codigo = input("Digite o código do solo: ").strip()
+        tipo = input("Digite o tipo do solo: ").strip()
+        origem = input("Origem do solo: ").strip()
+        cor = input("Descreva a cor do solo: ").strip()
+        porosidade = float(input("Porosidade: "))
+        massa_especifica_seca = float(input("Massa específica seca (g/cm³): "))
+        condutividade_hidraulica = float(input("Condutividade hidraulica (cm/h): "))
+        permeabilidade_eletroosmotica = float(input("Permeabilidade eletro-osmótica (cm²/V.h): "))
+
+        if tipo.strip().lower() == "areia":
+            solo = Areia(codigo=codigo,
+                         tipo=tipo,
+                         origem=origem,
+                         cor=cor,
+                         porosidade=porosidade,
+                         massa_especifica_seca=massa_especifica_seca,
+                         condutividade_hidraulica=condutividade_hidraulica,
+                         permeabilidade_eletroosmotica=permeabilidade_eletroosmotica)
+            self.__tela.imprime_mensagem("Novo solo cadastrado com sucesso.\n")
+
+        elif tipo.strip().lower() == "argila":
+            solo = Argila(codigo=codigo,
+                          tipo=tipo,
+                          origem=origem,
+                          cor=cor,
+                          porosidade=porosidade,
+                          massa_especifica_seca=massa_especifica_seca,
+                          condutividade_hidraulica=condutividade_hidraulica,
+                          permeabilidade_eletroosmotica=permeabilidade_eletroosmotica)
+            self.__tela.imprime_mensagem("Novo solo cadastrado com sucesso.\n")
+
+        elif tipo.strip().lower() == "silte":
+            solo = Silte(codigo=codigo,
+                         tipo=tipo,
+                         origem=origem,
+                         cor=cor,
+                         porosidade=porosidade,
+                         massa_especifica_seca=massa_especifica_seca,
+                         condutividade_hidraulica=condutividade_hidraulica,
+                         permeabilidade_eletroosmotica=permeabilidade_eletroosmotica)
+            self.__tela.imprime_mensagem("Novo solo cadastrado com sucesso.\n")
+        
+        self.__solos.append(solo)
+        return solo
+    
+    def retornar(self):
+        self.__controlador_sistema.abre_tela()
