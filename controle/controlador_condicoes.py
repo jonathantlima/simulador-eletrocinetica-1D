@@ -1,9 +1,11 @@
+from view.tela_condicoes import TelaCondicoes
 from modelo.condicoes import CondicoesDoProblema
 
 
 class ControladorCondicoes():
 
     def __init__(self, controlador_sistema):
+        self.__tela = TelaCondicoes()
         self.__controlador_sistema = controlador_sistema
         self.__condicoes = []
     
@@ -30,19 +32,19 @@ class ControladorCondicoes():
         return self.__condicoes
     
     def mostra_condicoes(self):
-        print("--- Código --- Concentração inicial --- Concentração no reservatório")
+        self.__tela.imprime_mensagem(f"--- Código --- Concentração inicial --- Concentração no reservatório")
         for condicao in self.__condicoes:
-            print(condicao.codigo, condicao.concentracao_inicial, condicao.concentracao_reservatorio)
+            self.__tela.imprime_mensagem(f"--- {condicao.codigo} --- {condicao.concentracao_inicial} --- {condicao.concentracao_reservatorio}")
     
     def retorna_condicao(self, codigo):
         for condicao in self.__condicoes:
             if (condicao.codigo == codigo):
                 return condicao
         else:
-            print("Condição não cadastrada ou código incorreto.\n")
+            self.__tela.imprime_mensagem("Condição não cadastrada ou código incorreto.\n")
     
     def cadastra_condicoes(self):
-        print("Novo Conjunto de Condições Iniciais e de Contorno")
+        self.__tela.imprime_mensagem("Novo Conjunto de Condições Iniciais e de Contorno")
         codigo = input("Código: ")
         concentracao_inicial = float(input("Concentração inicial (mg/L): "))
         gradiente_eletrico = float(input("Gradiente elétrico (V/cm): "))
@@ -55,7 +57,7 @@ class ControladorCondicoes():
                                        gradiente_hidraulico,
                                        concentracao_reservatorio)
         
-        print(f"Novas condições inicial e de contorno criadas (cód: {codigo}).\n")        
+        self.__tela.imprime_mensagem(f"Novas condições inicial e de contorno criadas (cód: {codigo}).\n")        
         self.__condicoes.append(condicao)
         return condicao
     

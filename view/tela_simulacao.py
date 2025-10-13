@@ -67,3 +67,4 @@ class TelaSimulacao():
         plt.legend()
         plt.grid()
         plt.show()
+

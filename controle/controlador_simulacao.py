@@ -93,7 +93,7 @@ class ControladorSimulacao():
                 n, m, self.__C = simulacao.cria_mesh()
                 return self.__tela.plotagem(m, incremento_espacial, incremento_temporal, comprimento, duracao, Conc)
         else:
-            print("Simulação não cadastrada ou código incorreto.\n")
+            self.__tela.imprime_mensagem("Simulação não cadastrada ou código incorreto.\n")
         
     def retornar(self):
         self.__controlador_sistema.abre_tela()

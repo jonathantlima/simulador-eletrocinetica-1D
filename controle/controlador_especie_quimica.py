@@ -36,7 +36,7 @@ class ControladorEspecieQuimica():
     def mostra_especies(self):
         self.__tela.imprime_mensagem("--- LISTA DE ESPÉCIES QUÍMICAS CADASTRADAS ---")
         for especie in self.__especies:
-            print(f"Código: {especie.codigo} - Fórmula: {especie.formula} - Coef. Difusão: {especie.coeficiente_de_difusao:.3f}")
+            self.__tela.imprime_mensagem(f"Código: {especie.codigo} - Fórmula: {especie.formula} - Coef. Difusão: {especie.coeficiente_de_difusao:.3f}")
             
     def retorna_especie(self, codigo):
         for especie in self.__especies:
@@ -46,7 +46,7 @@ class ControladorEspecieQuimica():
             self.__tela.imprime_mensagem("Espécia não cadastrada ou código incorreto.\n")
     
     def cadastra_especie_quimica(self):
-        print("--- Nova espécie química ---")
+        self.__tela.imprime_mensagem("--- Nova espécie química ---")
         codigo = input("Digite o código da espécie química: ")
         nome = input("Nome do composto: ")
         formula = input("Fórmula química: ")
