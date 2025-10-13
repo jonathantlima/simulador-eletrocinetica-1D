@@ -29,7 +29,7 @@ Este sistema foi reescrito do zero após dificuldades com a versão anterior, qu
 
 Você pode acessar o repositório original (versão descontinuada) aqui:
 
-👉 [Repositório Antigo no GitHub]([https://github.com/jonathantlima/trabalho01_dsoo])
+👉 [Repositório Antigo no GitHub](https://github.com/jonathantlima/trabalho01_dsoo)
 
 
 
