@@ -16,6 +16,7 @@ class ControladorUsuario():
         opcoes = {1: self.novo_usuario,
                   2: self.altera_usuario,
                   3: self.lista_usuarios,
+                  4: self.deleta_usuario,
                   0: self.retornar
         }
     
@@ -68,9 +69,8 @@ class ControladorUsuario():
                 usuario.telefone = novos_dados["telefone"]
                 usuario.departamento = novos_dados["departamento"]
                 usuario.matricula = novos_dados["matricula"]
-            self.__tela.imprime_mensagem("Dados atualizados com sucesso.\n")
-        else:
-            self.__tela.imprime_mensagem("Usuário não cadastrado ou matrícula incorreta.\n")
+                self.__tela.imprime_mensagem("Dados atualizados com sucesso.\n")
+        self.__tela.imprime_mensagem("Usuário não cadastrado ou matrícula incorreta.\n")
         
         return usuario
 
@@ -86,6 +86,31 @@ class ControladorUsuario():
         print("--- Nome --- Matrícula ---")
         for user in self.__usuarios:
             print(user.nome, user.matricula)
+    
+    '''def deleta_usuario(self):
+        self.lista_usuarios()
+        matricula = self.__tela.coleta_matricula_usuario()
+        for usuario in self.__usuarios:
+            if (usuario.matricula == matricula):
+                self.__usuarios.remove(usuario)
+            self.__tela.imprime_mensagem("Usuário deletado com sucesso.\n")
+        else:
+            self.__tela.imprime_mensagem("Usuário não cadastrado ou matrícula incorreta.\n")
+        
+        return usuario'''
+    
+    def deleta_usuario(self):
+        self.lista_usuarios()
+        matricula = self.__tela.coleta_matricula_usuario()
+        usuario = self.retorna_usuario(matricula)
+
+        if(usuario is not None):
+            self.__usuarios.remove(usuario)
+            self.lista_usuarios()
+        else:
+            self.__tela.imprime_mensagem("Usuário não cadastrado ou matrícula incorreta.\n")
+
+
     
     def retornar(self):
         self.__controlador_sistema.abre_tela()
