@@ -1,3 +1,5 @@
+import FreeSimpleGUI as sg
+
 class TelaEspecieQuimica():
 
     def mostra_menu(self):
@@ -11,4 +13,4 @@ class TelaEspecieQuimica():
         return opcao
     
     def imprime_mensagem(self, mensagem):
-        print(mensagem)
+        sg.popup("", mensagem)

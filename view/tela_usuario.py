@@ -39,16 +39,27 @@ class TelaUsuario():
         self.__window = sg.Window('Registro de solos').Layout(layout)
 
     def coleta_dados(self):
-        print("--- Cadastro de Usuário ---")
-        dados = {}
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text('-------- DADOS USUÁRIO ----------', font=("Helvica", 25))],
+            [sg.Text('Nome:', size=(20, 1)), sg.InputText('', key='nome')],
+            [sg.Text('email:', size=(20, 1)), sg.InputText('', key='email')],
+            [sg.Text('Telefone: ', size=(20, 1)), sg.InputText('', key='telefone')],
+            [sg.Text('Departamento:', size=(20, 1)), sg.InputText('', key='departamento')],
+            [sg.Text('Matrícula: ', size=(20, 1)), sg.InputText('', key='matricula')],
+            [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
+            ]
+        self.__window = sg.Window('Sistema de Usuários').Layout(layout)
 
-        dados["nome"] = self.__coleta_campo_str("Nome")
-        dados["email"] = self.__coleta_campo_str("E-mail")
-        dados["telefone"] = self.__coleta_campo_str("Telefone", permitir_numerico=True)
-        dados["departamento"] = self.__coleta_campo_str("Departamento")
-        dados["matricula"] = self.__coleta_campo_str("Matrícula", permitir_numerico=True)
+        button, values = self.open()
+        nome = values['nome']
+        email = values['email']
+        telefone = values['telefone']
+        departamento = values['departamento']
+        matricula = values['matricula']
 
-        return dados
+        self.close()
+        return {"nome": nome, "email": email, 'telefone': telefone, "departamento": departamento, "matricula": matricula}
     
     
     def __coleta_campo_str(self, nome_campo, permitir_numerico=False):
@@ -79,8 +90,21 @@ class TelaUsuario():
         self.close()
         return matricula
     
+    def mostra_usuarios(self, users, title="---Lista de Usuários---"):
+        layout = [ [sg.Listbox(users, size=(60, 12), key="-LISTBOX-", horizontal_scroll=True)],
+              [sg.Button('Ok'), sg.Button('Cancel')] ]
+        event, values = sg.Window(title, layout).read(close=True)
+
+        if event == "Ok":
+            try:
+                return values["-LISTBOX-"][0]
+            except:
+                return None
+        else:
+            return None
+    
     def imprime_mensagem(self, mensagem):
-        print(mensagem)
+        sg.popup("", mensagem, title="Atenção")
     
     def close(self):
         self.__window.Close()

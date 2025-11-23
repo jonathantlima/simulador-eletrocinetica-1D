@@ -32,10 +32,15 @@ class TelaSistema():
     
     def init_components(self):
         #sg.theme_previewer()
+        texto='''
+EKSTC: Esse sistema permite criar simulações para o
+transporte de contaminantes em solos, considerando
+a condição de fluxo acoplado
+            '''
         sg.ChangeLookAndFeel('DarkBlue')
         layout = [
-            [sg.Text('EKMass: a system for simulating contaminant transport by coupled flows', font=("Courier", 18))],
-            [sg.Text('Escolha sua opção', font=("Helvica",15))],
+            [sg.Text(texto, font=("Courier", 15))],
+            [sg.Text('Escolha sua opção', font=("Helvica", 18))],
             [sg.Radio('Usuários',"RD1", key='1')],
             [sg.Radio('Solos',"RD1", key='2')],
             [sg.Radio('Espécies químicas',"RD1", key='3')],
@@ -45,20 +50,7 @@ class TelaSistema():
             [sg.Radio('Finalizar sistema',"RD1", key='0')],
             [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
         ]
-        self.__window = sg.Window('Sistema de livros').Layout(layout)
-
-    '''def menu(self):
-        print(">>> SISTEMA DE SIMULAÇÃO DE EXPERIMENTOS COM ELETROCINÉTICA <<<")
-        print("1 - Usuários")
-        print("2 - Solos")
-        print("3 - Espécies químicas")
-        print("4 - Célula experimentais")
-        print("5 - Condições iniciais e de contorno")
-        print("6 - Simulação")
-        print("0 - Finalizar")
-    
-        opcao = int(input("Selecione uma opção: "))
-        return opcao'''
+        self.__window = sg.Window('Sistema EKSTC').Layout(layout)
     
     def imprime_mensagem(self, mensagem):
-        print(mensagem)
+        sg.popup("", mensagem)

@@ -1,3 +1,5 @@
+import FreeSimpleGUI as sg
+
 class TelaCelulas():
 
     def mostra_menu(self):
@@ -11,4 +13,4 @@ class TelaCelulas():
         return opcao
     
     def imprime_mensagem(self, mensagem):
-        print(mensagem)
+        sg.popup("", mensagem)

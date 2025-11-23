@@ -1,4 +1,5 @@
 from numpy import arange
+import FreeSimpleGUI as sg
 import matplotlib.pyplot as plt
 
 class TelaSimulacao():
@@ -22,7 +23,7 @@ class TelaSimulacao():
                 print("Entrada inválida. Digite um número inteiro.")
     
     def imprime_mensagem(self, mensagem):
-        print(mensagem)
+        sg.popup("", mensagem)
     
     def coleta_dados(self):
         print("--- Coleta de Dados para Simulação ---")
