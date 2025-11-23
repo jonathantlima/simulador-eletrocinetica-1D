@@ -14,8 +14,8 @@ class ControladorSolo():
         self.__controlador_sistema = controlador_sistema
     
     @property
-    def solos(self):
-        return self.__solos_dao
+    def solos_dao(self):
+        return self.__solos_dao.get_all()
     
     def abre_tela(self):
         opcoes = {1: self.cadastra_solo,

@@ -12,8 +12,8 @@ class ControladorUsuario():
         self.__controlador_sistema = controlador_sistema
 
     @property
-    def usuarios(self):
-        return self.__usuarios_dao
+    def usuarios_dao(self):
+        return self.__usuarios_dao.get_all()
 
     def abre_tela(self):
         opcoes = {1: self.novo_usuario,

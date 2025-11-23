@@ -11,8 +11,8 @@ class ControladorCelulaExperimental():
         self.__celulas_dao = CelulaExperimentalDAO()
     
     @property
-    def celulas(self):
-        return self.__celulas_dao
+    def celulas_dao(self):
+        return self.__celulas_dao.get_all()
     
     def abre_tela(self):
         opcoes = {1: self.cadastra_celula,

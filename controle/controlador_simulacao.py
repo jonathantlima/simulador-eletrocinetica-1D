@@ -34,9 +34,9 @@ class ControladorSimulacao():
                 self.__tela.imprime_mensagem(f"Erro inesperado no menu: {e}")
     
     def cria_simulacao(self):
-        if ( (self.__controlador_sistema.controlador_usuario.usuarios is not None) and (self.__controlador_sistema.controlador_solo.solos is not None) and
-            (self.__controlador_sistema.controlador_especie_quimica.especies is not None) and (self.__controlador_sistema.controlador_celula_experimental.celulas is not None) and
-            (self.__controlador_sistema.controlador_condicoes.condicoes is not None) ):
+        if ( (self.__controlador_sistema.controlador_usuario.usuarios_dao is not None) and (self.__controlador_sistema.controlador_solo.solos_dao is not None) and
+            (self.__controlador_sistema.controlador_especie_quimica.especies_dao is not None) and (self.__controlador_sistema.controlador_celula_experimental.celulas_dao is not None) and
+            (self.__controlador_sistema.controlador_condicoes.condicoes_dao is not None) ):
 
             try:
                 codigo_simulacao, duracao = self.__tela.coleta_codigo_e_duracao()
