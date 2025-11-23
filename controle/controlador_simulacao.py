@@ -1,13 +1,14 @@
 from view.tela_simulacao import TelaSimulacao
 from modelo.usuario import Usuario
 from modelo.simulacao import Simulacao
+from DAOs.simulacao_dao import SimulacaoDAO
 
 
 class ControladorSimulacao():
 
     def __init__(self, controlador_sistema):
         self.__tela = TelaSimulacao()
-        self.__simulacoes = []
+        self.__simulacoes_dao = SimulacaoDAO()
         self.__controlador_sistema = controlador_sistema
     
     def abre_tela(self):
@@ -15,6 +16,7 @@ class ControladorSimulacao():
                   2: self.lista_simulacoes,
                   3: self.plota_grafico,
                   4: self.gerar_relatorio,
+                  5: self.deleta_simulacao,
                   0: self.retornar
         }
     
@@ -32,9 +34,21 @@ class ControladorSimulacao():
                 self.__tela.imprime_mensagem(f"Erro inesperado no menu: {e}")
     
     def cria_simulacao(self):
+        if ( (self.__controlador_sistema.controlador_usuario.usuarios is not None) and (self.__controlador_sistema.controlador_solo.solos is not None) and
+            (self.__controlador_sistema.controlador_especie_quimica.especies is not None) and (self.__controlador_sistema.controlador_celula_experimental.celulas is not None) and
+            (self.__controlador_sistema.controlador_condicoes.condicoes is not None) ):
+
+            try:
+                codigo_simulacao, duracao = self.__tela.coleta_codigo_e_duracao()
+            except Exception as e:
+                self.__tela.imprime_mensagem(f"Falha ao coletar dados: {e}")
+        else:
+            self.__tela.imprime_mensagem(f'Alguns objetos ainda não foram gerados.')
+            self.retornar()
+            return
 
         # VALIDA A POSSIBILIDADE DE CRIAR UMA SIMULAÇÃO
-        try:
+        '''try:
             usuarios = self.__controlador_sistema.controlador_usuario.usuarios
             solos = self.__controlador_sistema.controlador_solo.solos
             especies = self.__controlador_sistema.controlador_especie_quimica.especies
@@ -65,7 +79,7 @@ class ControladorSimulacao():
             self.__tela.imprime_mensagem(f"Erro ao criar simulação: {e}")
         
         # coleta os dados elementares da simulação
-        codigo_simulacao, duracao = self.__tela.coleta_dados()
+        codigo_simulacao, duracao = self.__tela.coleta_codigo_e_duracao()'''
 
         # DEFINE USUÁRIO
         try:
@@ -235,5 +249,6 @@ class ControladorSimulacao():
             print(f"Relatório gerado com sucesso em: {caminho_arquivo}")
         except Exception as e:
             print(f"Erro ao gerar relatório: {e}")
-
-
+    
+    def deleta_simulacao(self):
+        pass

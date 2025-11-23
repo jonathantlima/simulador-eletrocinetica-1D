@@ -1,6 +1,9 @@
 import FreeSimpleGUI as sg
 
 class TelaEspecieQuimica():
+    def __init__(self):
+        self.__window = None
+        self.init_opcoes()
 
     def mostra_menu(self):
         self.init_opcoes()

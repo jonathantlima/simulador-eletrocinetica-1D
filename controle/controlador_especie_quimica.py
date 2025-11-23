@@ -14,7 +14,7 @@ class ControladorEspecieQuimica():
     
     @property
     def especies(self):
-        return self.__especies
+        return self.__especies_dao
     
     def abre_tela(self):
         opcoes = {1: self.cadastra_especie_quimica,
