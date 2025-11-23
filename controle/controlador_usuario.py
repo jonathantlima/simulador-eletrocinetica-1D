@@ -82,12 +82,6 @@ class ControladorUsuario():
                 return usuario
         else:
             self.__tela.imprime_mensagem("Usuário não cadastrado ou matrícula incorreta.\n")
-
-    '''def lista_usuarios(self):
-        self.__tela.imprime_mensagem("Lista de Usuários")
-        self.__tela.imprime_mensagem("--- Nome --- Matrícula ---")
-        for user in self.__usuarios:
-            print(user.nome, user.matricula)'''
     
     def lista_usuarios(self):
         dados_usuarios = []
@@ -96,18 +90,6 @@ class ControladorUsuario():
                 #{"Matrícula:": usuario.matricula, "Nome:": usuario.nome, "E-mail:":usuario.email, "Telefone:": usuario.telefone, "Departamento:": usuario.departamento}
                 )
         self.__tela.mostra_usuarios(dados_usuarios)
-
-    '''def deleta_usuario(self):
-        self.lista_usuarios()
-        matricula = self.__tela.coleta_matricula_usuario()
-        for usuario in self.__usuarios:
-            if (usuario.matricula == matricula):
-                self.__usuarios.remove(usuario)
-            self.__tela.imprime_mensagem("Usuário deletado com sucesso.\n")
-        else:
-            self.__tela.imprime_mensagem("Usuário não cadastrado ou matrícula incorreta.\n")
-        
-        return usuario'''
 
     def deleta_usuario(self):
         self.lista_usuarios()

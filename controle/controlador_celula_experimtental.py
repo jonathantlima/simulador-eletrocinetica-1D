@@ -1,5 +1,6 @@
 from view.tela_celulas import TelaCelulas
 from modelo.celula_experimental import CelulaExperimental
+from DAOs.celula_experimental_dao import CelulaExperimentalDAO
 
 
 class ControladorCelulaExperimental():
@@ -7,7 +8,7 @@ class ControladorCelulaExperimental():
     def __init__(self, controlador_sistema):
         self.__controlador_sistema = controlador_sistema
         self.__tela = TelaCelulas()
-        self.__celulas = []
+        self.__celulas_dao = CelulaExperimentalDAO()
     
     @property
     def celulas(self):
@@ -15,8 +16,9 @@ class ControladorCelulaExperimental():
     
     def abre_tela(self):
         opcoes = {1: self.cadastra_celula,
-                  2: self.retorna_celula,
+                  2: self.altera_celula,
                   3: self.mostra_celulas,
+                  4: self.deleta_celula,
                   0: self.retornar
         }
     
@@ -42,33 +44,59 @@ class ControladorCelulaExperimental():
         return self.__celulas
 
     def mostra_celulas(self):
-        if self.__celulas:
-            self.__tela.imprime_mensagem("--- Lista de Células Experimentais ---")
-            self.__tela.imprime_mensagem("--- Código --- Comprimento (cm) ---")
-            for celula in self.__celulas:
-                self.__tela.imprime_mensagem(f"--- {celula.codigo} --- {celula.comprimento}")
+        dados_celulas = []
+        for cell in self.__celulas_dao.get_all():
+            dados_celulas.append(f"Código: {cell.codigo}, Material: {cell.material}, Comprimento: {cell.comprimento}, Diametro: {cell.diametro}")
+        self.__tela.exibe_celulas(dados_celulas)
 
-    def retorna_celula(self, codigo):
-        for celula in self.__celulas:
-            if (celula.codigo == codigo):
-                return celula
-        else:
-            self.__tela.imprime_mensagem("Célula não cadastrada ou código incorreto.\n")
+    def altera_celula(self):
+        self.mostra_celulas()
+        codigo = self.__tela.coleta_codigo()
+        try:
+            for cell in self.__celulas_dao.get_all():
+                if (cell.codigo == codigo):
+                    novos_dados = self.__tela.coleta_dados()
+                    cell.codigo = novos_dados["codigo"]
+                    cell.material = novos_dados["material"]
+                    cell.comprimento = novos_dados["comprimento"]
+                    cell.diametro = novos_dados["diametro"]
+                    self.__tela.imprime_mensagem("Dados atualizados com sucesso.\n")
+        except:
+            self.__tela.imprime_mensagem("Dados incorretos ou célula não cadastrada.")
 
     def cadastra_celula(self):
-        self.__tela.imprime_mensagem("--- Nova Célula Experimental ---")
-        codigo = input("Código da nova célula: ")
-        material = input("Material de fabricação: ")
-        comprimento = float(input("Comprimento da célula (cm): "))
-        diametro = float(input("Diâmetro da célula (cm): "))
+        try:
+            dados = self.__tela.coleta_dados()
 
-        celula = CelulaExperimental(codigo=codigo,
-                                    material=material,
-                                    comprimento=comprimento,
-                                    diametro=diametro)
-        self.__tela.imprime_mensagem(f"Nova célula experimental cadastrada (cód: {codigo})\n")        
-        self.__celulas.append(celula)
-        return celula
+            celula = CelulaExperimental(codigo=dados['codigo'],
+                                    material=dados['material'],
+                                    comprimento=dados['comprimento'],
+                                    diametro=dados['diametro'])
+            self.__tela.imprime_mensagem(f"Nova célula experimental cadastrada (cód: {celula.codigo})\n")
+            self.__celulas_dao.add(celula)
+            return celula
+
+        except KeyError as e:
+            self.__tela.imprime_mensagem(f"Dado ausente: {e}")
+        except Exception as e:
+            self.__tela.imprime_mensagem(f"Erro ao cadastrar usuário: {e}")
+    
+    def deleta_celula(self):
+        try:
+            if self.__celulas_dao is not None:
+                self.mostra_celulas()
+            else:
+                self.__tela.imprime_mensagem("Nenhuma célula cadastrada.")
+            
+            codigo_celula = self.__tela.coleta_codigo()
+            for cell in self.__celulas_dao.get_all():
+                if (cell.codigo == codigo_celula):
+                    self.__celulas_dao.remove(cell.codigo)
+                    self.__tela.imprime_mensagem(f"Célula experimental ({cell.codigo}) excluída com sucesso.")
+                    return cell
+        
+        except Exception as e:
+            self.__tela.imprime_mensagem(f"Erro ao tentar excluir a célula experimental {cell.codigo}.")
     
     def retornar(self):
         self.__controlador_sistema.abre_tela()
