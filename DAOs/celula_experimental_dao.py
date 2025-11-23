@@ -14,7 +14,7 @@ class CelulaExperimentalDAO(DAO):
         if((celula is not None) and isinstance(celula, CelulaExperimental) and isinstance(celula.codigo, str)):
             super().update(celula.codigo, celula)
 
-    def get(self, key:int):
+    def get(self, key: str):
         if isinstance(key, str):
             return super().get(key)
 

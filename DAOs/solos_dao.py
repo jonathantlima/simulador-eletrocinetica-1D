@@ -14,7 +14,7 @@ class SoloDAO(DAO):
         if((solo is not None) and isinstance(solo, Solo) and isinstance(solo.codigo, str)):
             super().update(solo.codigo, solo)
 
-    def get(self, key:str):
+    def get(self, key: str):
         if isinstance(key, str):
             return super().get(key)
 

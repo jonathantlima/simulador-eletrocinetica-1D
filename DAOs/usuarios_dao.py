@@ -14,7 +14,7 @@ class UsuarioDAO(DAO):
         if((usuario is not None) and isinstance(usuario, Usuario) and isinstance(usuario.matricula, str)):
             super().update(usuario.matricula, usuario)
 
-    def get(self, key:int):
+    def get(self, key: str):
         if isinstance(key, str):
             return super().get(key)
 
