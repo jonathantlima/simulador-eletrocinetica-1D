@@ -1,5 +1,6 @@
 from view.tela_condicoes import TelaCondicoes
 from modelo.condicoes import CondicoesDoProblema
+from DAOs.condicoes_dao import CondicoesDoProbelamDAO
 
 
 class ControladorCondicoes():
@@ -7,16 +8,17 @@ class ControladorCondicoes():
     def __init__(self, controlador_sistema):
         self.__tela = TelaCondicoes()
         self.__controlador_sistema = controlador_sistema
-        self.__condicoes = []
+        self.__condicoes_dao = CondicoesDoProbelamDAO()
     
     @property
     def condicoes(self):
-        self.__condicoes
+        self.__condicoes_dao
     
     def abre_tela(self):
         opcoes = {1: self.cadastra_condicoes,
-                  2: self.retorna_condicao,
+                  2: self.altera_condicoes,
                   3: self.mostra_condicoes,
+                  4: self.deleta_condicoes,
                   0: self.retornar
         }
     
@@ -42,34 +44,61 @@ class ControladorCondicoes():
         return self.__condicoes
     
     def mostra_condicoes(self):
-        self.__tela.imprime_mensagem(f"--- Código --- Concentração inicial --- Concentração no reservatório")
-        for condicao in self.__condicoes:
-            self.__tela.imprime_mensagem(f"--- {condicao.codigo} --- {condicao.concentracao_inicial} --- {condicao.concentracao_reservatorio}")
+        condicoes = []
+        for condicao in self.__condicoes_dao.get_all():
+            condicoes.append([condicao.codigo, condicao.concentracao_inicial, condicao.gradiente_eletrico, condicao.gradiente_hidraulico, condicao.concentracao_reservatorio])
+        self.__tela.exibe_condicoes(condicoes)
     
-    def retorna_condicao(self, codigo):
-        for condicao in self.__condicoes:
-            if (condicao.codigo == codigo):
-                return condicao
-        else:
-            self.__tela.imprime_mensagem("Condição não cadastrada ou código incorreto.\n")
+    def altera_condicoes(self):
+        self.mostra_condicoes()
+        codigo = self.__tela.coleta_codigo()
+        try:
+            for condicao in self.__condicoes_dao.get_all():
+                if (condicao.codigo == codigo):
+                    novos_dados = self.__tela.coleta_dados()
+                    condicao.codigo = novos_dados["codigo"]
+                    condicao.concentracao_inicial = novos_dados["concentracao_inicial"]
+                    condicao.gradiente_eletrico = novos_dados["gradiente_eletrico"]
+                    condicao.gradiente_hidraulico = novos_dados["gradiente_hidraulico"]
+                    condicao.concentracao_reservatorio = novos_dados['concentracao_reservatorio']
+                    self.__tela.imprime_mensagem("Dados atualizados com sucesso.\n")
+        except:
+            self.__tela.imprime_mensagem("Dados incorretos ou condições iniciais e de contorno não cadastradas.")
     
     def cadastra_condicoes(self):
-        self.__tela.imprime_mensagem("Novo Conjunto de Condições Iniciais e de Contorno")
-        codigo = input("Código: ")
-        concentracao_inicial = float(input("Concentração inicial (mg/L): "))
-        gradiente_eletrico = float(input("Gradiente elétrico (V/cm): "))
-        gradiente_hidraulico = float(input("Gradiente hidráulico (cm/cm): "))
-        concentracao_reservatorio = float(input("Concentração no reservatório (mg/L): "))
+        try:
+            dados = self.__tela.coleta_dados()
 
-        condicao = CondicoesDoProblema(codigo,
-                                       concentracao_inicial,
-                                       gradiente_eletrico,
-                                       gradiente_hidraulico,
-                                       concentracao_reservatorio)
+            condicao = CondicoesDoProblema(dados['codigo'],
+                                       dados['concentracao_inicial'],
+                                       dados['gradiente_eletrico'],
+                                       dados['gradiente_hidraulico'],
+                                       dados['concentracao_reservatorio'])
+            self.__tela.imprime_mensagem(f"Novas condições iniciais e de contorno cadastradas (cód: {condicao.codigo})\n")
+            self.__condicoes_dao.add(condicao)
+            return condicao
+
+        except KeyError as e:
+            self.__tela.imprime_mensagem(f"Dado ausente: {e}")
+        except Exception as e:
+            self.__tela.imprime_mensagem(f"Erro ao cadastrar condições inicial e de contorno: {e}")
+    
+    def deleta_condicoes(self):
+        try:
+            if self.__condicoes_dao is not None:
+                self.mostra_condicoes()
+            else:
+                self.__tela.imprime_mensagem("Nenhuma condicao cadastrada.")
+            
+            codigo_condicao = self.__tela.coleta_codigo()
+            for condicao in self.__condicoes_dao.get_all():
+                if (condicao.codigo == codigo_condicao):
+                    self.__condicoes_dao.remove(condicao.codigo)
+                    self.__tela.imprime_mensagem(f"Condições iniciais e de contorno ({condicao.codigo}) excluídas com sucesso.")
+                    return condicao
         
-        self.__tela.imprime_mensagem(f"Novas condições inicial e de contorno criadas (cód: {codigo}).\n")        
-        self.__condicoes.append(condicao)
-        return condicao
+        except Exception as e:
+            self.__tela.imprime_mensagem(f"Erro ao tentar excluir a célula experimental {condicao.codigo}.")
     
     def retornar(self):
         self.__controlador_sistema.abre_tela()
