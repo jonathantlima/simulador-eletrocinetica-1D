@@ -12,7 +12,7 @@ class ControladorCelulaExperimental():
     
     @property
     def celulas_dao(self):
-        return self.__celulas_dao.get_all()
+        return self.__celulas_dao
     
     def abre_tela(self):
         opcoes = {1: self.cadastra_celula,

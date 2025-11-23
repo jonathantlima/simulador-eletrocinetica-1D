@@ -34,9 +34,11 @@ class ControladorSimulacao():
                 self.__tela.imprime_mensagem(f"Erro inesperado no menu: {e}")
     
     def cria_simulacao(self):
-        if ( (self.__controlador_sistema.controlador_usuario.usuarios_dao is not None) and (self.__controlador_sistema.controlador_solo.solos_dao is not None) and
-            (self.__controlador_sistema.controlador_especie_quimica.especies_dao is not None) and (self.__controlador_sistema.controlador_celula_experimental.celulas_dao is not None) and
-            (self.__controlador_sistema.controlador_condicoes.condicoes_dao is not None) ):
+        if ( list(self.__controlador_sistema.controlador_usuario.usuarios_dao) and 
+            list(self.__controlador_sistema.controlador_solo.solos_dao) and
+            list(self.__controlador_sistema.controlador_especie_quimica.especies_dao) and 
+            list(self.__controlador_sistema.controlador_celula_experimental.celulas_dao) and
+            list(self.__controlador_sistema.controlador_condicoes.condicoes_dao) ):
 
             try:
                 codigo_simulacao, duracao = self.__tela.coleta_codigo_e_duracao()
@@ -48,7 +50,7 @@ class ControladorSimulacao():
             return
 
         # VALIDA A POSSIBILIDADE DE CRIAR UMA SIMULAÇÃO
-        '''try:
+        try:
             usuarios = self.__controlador_sistema.controlador_usuario.usuarios
             solos = self.__controlador_sistema.controlador_solo.solos
             especies = self.__controlador_sistema.controlador_especie_quimica.especies
@@ -79,7 +81,7 @@ class ControladorSimulacao():
             self.__tela.imprime_mensagem(f"Erro ao criar simulação: {e}")
         
         # coleta os dados elementares da simulação
-        codigo_simulacao, duracao = self.__tela.coleta_codigo_e_duracao()'''
+        codigo_simulacao, duracao = self.__tela.coleta_codigo_e_duracao()
 
         # DEFINE USUÁRIO
         try:

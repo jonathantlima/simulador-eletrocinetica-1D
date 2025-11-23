@@ -12,7 +12,7 @@ class ControladorCondicoes():
     
     @property
     def condicoes_dao(self):
-        self.__condicoes_dao.get_all()
+        self.__condicoes_dao
     
     def abre_tela(self):
         opcoes = {1: self.cadastra_condicoes,

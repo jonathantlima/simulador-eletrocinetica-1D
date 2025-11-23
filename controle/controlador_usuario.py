@@ -13,7 +13,7 @@ class ControladorUsuario():
 
     @property
     def usuarios_dao(self):
-        return self.__usuarios_dao.get_all()
+        return self.__usuarios_dao
 
     def abre_tela(self):
         opcoes = {1: self.novo_usuario,
