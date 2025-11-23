@@ -31,10 +31,11 @@ class TelaSimulacao():
         layout = [
             [sg.Text('---- SIMULAÇÕES ----', font=("Helvica", 25))],
             [sg.Text('Escolha sua opção', font=("Helvica", 15))],
-            [sg.Radio('Incluir simulacao', "RD1", key='1')],
-            [sg.Radio('Alterar simulacao', "RD1", key='2')],
-            [sg.Radio('Listar simulacoes', "RD1", key='3')],
-            [sg.Radio('Deletar simulacao', "RD1", key='4')],
+            [sg.Radio('Criar simulacao', "RD1", key='1')],
+            [sg.Radio('Listar simulacao', "RD1", key='2')],
+            [sg.Radio('Plotar gráfico', "RD1", key='3')],
+            [sg.Radio('Gerar relatório', "RD1", key='4')],
+            [sg.Radio('Deletar simulacao', "RD1", key='5')],
             [sg.Radio('Retornar', "RD1", key='0')],
             [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
         ]
@@ -56,7 +57,7 @@ class TelaSimulacao():
         codigo = values['codigo']
         duracao = int(values['duracao'])
         self.close()
-        return codigo
+        return codigo, duracao
     
     
     def coleta_codigo_solo(self):

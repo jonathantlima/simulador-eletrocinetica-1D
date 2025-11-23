@@ -10,6 +10,9 @@ class ControladorSimulacao():
         self.__tela = TelaSimulacao()
         self.__simulacoes_dao = SimulacaoDAO()
         self.__controlador_sistema = controlador_sistema
+        # Adicionado para manter a lista de simulações em memória,
+        # pois o DAO armazena em disco, mas o código original usa uma lista em memória para listagem e plotagem.
+        self.__simulacoes = list(self.__simulacoes_dao.get_all())
     
     def abre_tela(self):
         opcoes = {1: self.cria_simulacao,
@@ -34,54 +37,29 @@ class ControladorSimulacao():
                 self.__tela.imprime_mensagem(f"Erro inesperado no menu: {e}")
     
     def cria_simulacao(self):
-        if ( list(self.__controlador_sistema.controlador_usuario.usuarios_dao) and 
-            list(self.__controlador_sistema.controlador_solo.solos_dao) and
-            list(self.__controlador_sistema.controlador_especie_quimica.especies_dao) and 
-            list(self.__controlador_sistema.controlador_celula_experimental.celulas_dao) and
-            list(self.__controlador_sistema.controlador_condicoes.condicoes_dao) ):
+        # 1. Validação corrigida: verifica se as coleções (retornadas por .get_all()) estão vazias.
+        #    Assume-se que as propriedades nos outros controladores retornam o objeto DAO.
+        try:
+            usuarios = list(self.__controlador_sistema.controlador_usuario.usuarios_dao.get_all())
+            solos = list(self.__controlador_sistema.controlador_solo.solos_dao.get_all())
+            especies = list(self.__controlador_sistema.controlador_especie_quimica.especies_dao.get_all())
+            celulas = list(self.__controlador_sistema.controlador_celula_experimental.celulas_dao.get_all())
+            condicoes = list(self.__controlador_sistema.controlador_condicoes.condicoes_dao.get_all())
+        except AttributeError as e:
+            self.__tela.imprime_mensagem(f"Erro de atributo ao acessar DAO: {e}. Verifique se as propriedades nos controladores retornam o objeto DAO.")
+            return
 
-            try:
-                codigo_simulacao, duracao = self.__tela.coleta_codigo_e_duracao()
-            except Exception as e:
-                self.__tela.imprime_mensagem(f"Falha ao coletar dados: {e}")
-        else:
-            self.__tela.imprime_mensagem(f'Alguns objetos ainda não foram gerados.')
+        if not (usuarios and solos and especies and celulas and condicoes):
+            self.__tela.imprime_mensagem('Alguns objetos ainda não foram gerados. Certifique-se de cadastrar: Usuário, Solo, Espécie Química, Célula Experimental e Condições.')
             self.retornar()
             return
 
-        # VALIDA A POSSIBILIDADE DE CRIAR UMA SIMULAÇÃO
+        # 2. Correção do desempacotamento: espera-se que coleta_codigo_e_duracao retorne 2 valores.
         try:
-            usuarios = self.__controlador_sistema.controlador_usuario.usuarios
-            solos = self.__controlador_sistema.controlador_solo.solos
-            especies = self.__controlador_sistema.controlador_especie_quimica.especies
-            celulas = self.__controlador_sistema.controlador_celula_experimental.celulas
-            condicoes = self.__controlador_sistema.controlador_condicoes.condicoes
-
-            entidades = {
-                "Usuários": usuarios,
-                "Solos": solos,
-                "Espécies": especies,
-                "Células": celulas,
-                "Condições": condicoes
-            }
-
-            mensagens = []
-            for nome_entidade, lista_entidade in entidades.items():
-                if not lista_entidade:
-                    mensagens.append(f"{nome_entidade} não cadastrados(as).")
-
-            if mensagens:
-                for msg in mensagens:
-                    self.__tela.imprime_mensagem(msg)
-                self.__tela.imprime_mensagem("Simulação abortada. Retornando...")
-                self.retornar()
-                return
-
+            codigo_simulacao, duracao = self.__tela.coleta_codigo_e_duracao()
         except Exception as e:
-            self.__tela.imprime_mensagem(f"Erro ao criar simulação: {e}")
-        
-        # coleta os dados elementares da simulação
-        codigo_simulacao, duracao = self.__tela.coleta_codigo_e_duracao()
+            self.__tela.imprime_mensagem(f"Falha ao coletar dados: {e}")
+            return # Adicionado return para evitar prosseguir com dados incompletos
 
         # DEFINE USUÁRIO
         try:
@@ -102,69 +80,16 @@ class ControladorSimulacao():
             return
 
         # DEFINE O SOLO QUE SERÁ USADO
-        try:
-            # Lista os solos cadastrados
-            self.__controlador_sistema.controlador_solo.mostra_solos()
-
-            solo = None
-            while solo is None:
-                codigo_solo = self.__tela.coleta_codigo_solo()
-                solo = self.__controlador_sistema.controlador_solo.retorna_solo(codigo_solo)
-                if solo is None:
-                    self.__tela.imprime_mensagem("Código inválido. Tente novamente.")
-            self.__tela.imprime_mensagem(f"Solo selecionado: {solo.codigo}\n")
-        
-        except Exception as e:
-            self.__tela.imprime_mensagem(f"Erro ao selecionar solo: {e}")
-            return
+        solo = self.__controlador_sistema.controlador_solo.retorna_solo()
 
         # DEFINE A ESPÉCIE QUÍMICA QUE SERÁ SIMULADA
-        try:
-            self.__controlador_sistema.controlador_especie_quimica.mostra_especies()
-
-            especie_quimica = None
-            while especie_quimica is None:
-                codigo_especie = self.__tela.coleta_codigo_especie_quimica()
-                especie_quimica = self.__controlador_sistema.controlador_especie_quimica.retorna_especie(codigo_especie)
-                if especie_quimica is None:
-                    self.__tela.imprime_mensagem("Código inválido, tente novamente.")
-            self.__tela.imprime_mensagem(f"Espécie química selecionda: {especie_quimica.codigo}")
-        
-        except Exception as e:
-            self.__tela.imprime_mensagem(f"Erro ao selecionar espécie química: {e}")
-            return
+        especie_quimica = self.__controlador_sistema.controlador_especie_quimica.retorna_especie()
 
         # DEFINE A CÉLULA EXPERIMENTAL QUE SERÁ SIMULADA
-        try:
-            self.__controlador_sistema.controlador_celula_experimental.mostra_celulas()
-
-            celula_experimental = None
-            while celula_experimental is None:
-                codigo_celula = self.__tela.coleta_codigo_celula()
-                celula_experimental = self.__controlador_sistema.controlador_celula_experimental.retorna_celula(codigo_celula)
-                if celula_experimental is None:
-                    self.__tela.imprime_mensagem("Código inválido, tente novamente.")
-            self.__tela.imprime_mensagem(f"Célula experimental selecionda: {celula_experimental.codigo}")
-        
-        except Exception as e:
-            self.__tela.imprime_mensagem(f"Erro ao selecionar célula experimental: {e}")
-            return
+        celula_experimental = self.__controlador_sistema.controlador_celula_experimental.retorna_celula()
 
         # DEFINE AS CONDIÇÕES INICIAIS E DE CONTORNO DO PROBLEMA
-        try:
-            self.__controlador_sistema.controlador_condicoes.mostra_condicoes()
-
-            condicao = None
-            while condicao is None:
-                codigo_condicao = self.__tela.coleta_codigo_condicoes()
-                condicao = self.__controlador_sistema.controlador_condicoes.retorna_condicao(codigo_condicao)
-                if condicao is None:
-                    self.__tela.imprime_mensagem("Código inválido, tente novamente.")
-            self.__tela.imprime_mensagem(f"Condições iniciais e de contorno selecionadas: {condicao.codigo}")
-        
-        except Exception as e:
-            self.__tela.imprime_mensagem(f"Erro ao selecionar condições iniciais e de contorno: {e}")
-            return
+        condicao = self.__controlador_sistema.controlador_condicoes.retorna_condicao()
 
         # CRIA A SIMULAÇÃO
         simulacao = Simulacao(usuario,
@@ -178,8 +103,12 @@ class ControladorSimulacao():
         simulacao.calcula_coeficientes()
         simulacao.cria_mesh()
         simulacao.execucao()
+        
+        # Salva no DAO e adiciona à lista em memória
+        self.__simulacoes_dao.add(simulacao)
         self.__simulacoes.append(simulacao)
 
+        self.__tela.imprime_mensagem(f"Simulação {codigo_simulacao} criada com sucesso!")
         return simulacao
     
     def lista_simulacoes(self):
@@ -253,4 +182,17 @@ class ControladorSimulacao():
             print(f"Erro ao gerar relatório: {e}")
     
     def deleta_simulacao(self):
-        pass
+        self.lista_simulacoes()
+        codigo = self.__tela.coleta_codigo_simulacao()
+        simulacao_encontrada = None
+        for simulacao in self.__simulacoes:
+            if simulacao.codigo == codigo:
+                simulacao_encontrada = simulacao
+                break
+        
+        if simulacao_encontrada:
+            self.__simulacoes_dao.remove(codigo)
+            self.__simulacoes.remove(simulacao_encontrada)
+            self.__tela.imprime_mensagem(f"Simulação {codigo} excluída com sucesso.")
+        else:
+            self.__tela.imprime_mensagem("Simulação não cadastrada ou código incorreto.")

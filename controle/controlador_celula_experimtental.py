@@ -98,5 +98,12 @@ class ControladorCelulaExperimental():
         except Exception as e:
             self.__tela.imprime_mensagem(f"Erro ao tentar excluir a célula experimental {cell.codigo}.")
     
+    def retorna_celula(self):
+        self.mostra_celulas()
+        codigo_celula = self.__tela.coleta_codigo()
+        for celula in self.__celulas_dao.get_all():
+            if (celula.codigo == codigo_celula):
+                return celula
+    
     def retornar(self):
         self.__controlador_sistema.abre_tela()

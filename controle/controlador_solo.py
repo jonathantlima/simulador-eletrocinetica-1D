@@ -137,3 +137,14 @@ class ControladorSolo():
         
         except Exception as e:
             self.__tela.imprime_mensagem(f"Erro ao tentar excluir o solo {solo.codigo}.")
+    
+    def retorna_solo(self):
+        try:
+            self.mostra_solos()
+            codigo_solo = self.__tela.coleta_codigo()
+            if codigo_solo:
+                for solo in self.__solos_dao.get_all():
+                        if (solo.codigo == codigo_solo):
+                            return solo
+        except Exception as e:
+            self.__tela.imprime_mensagem(f"Erro ao tentar retornar o solo {solo.codigo}.")

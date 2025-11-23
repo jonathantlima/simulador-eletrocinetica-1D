@@ -12,7 +12,7 @@ class ControladorCondicoes():
     
     @property
     def condicoes_dao(self):
-        self.__condicoes_dao
+        return self.__condicoes_dao
     
     def abre_tela(self):
         opcoes = {1: self.cadastra_condicoes,
@@ -99,6 +99,13 @@ class ControladorCondicoes():
         
         except Exception as e:
             self.__tela.imprime_mensagem(f"Erro ao tentar excluir a célula experimental {condicao.codigo}.")
+    
+    def retorna_condicao(self):
+        self.mostra_condicoes()
+        codigo_condicao = self.__tela.coleta_codigo()
+        for condicao in self.__condicoes_dao.get_all():
+            if (condicao.codigo == codigo_condicao):
+                return condicao
     
     def retornar(self):
         self.__controlador_sistema.abre_tela()

@@ -119,5 +119,12 @@ class ControladorEspecieQuimica():
         except Exception as e:
             self.__tela.imprime_mensagem(f"Erro ao tentar excluir a célula experimental {especie.codigo}.")
     
+    def retorna_especie(self):
+        self.mostra_especies()
+        codigo_especie = self.__tela.coleta_codigo()
+        for especie in self.__especies_dao.get_all():
+            if (especie.codigo == codigo_especie):
+                return especie
+    
     def retornar(self):
         self.__controlador_sistema.abre_tela()
