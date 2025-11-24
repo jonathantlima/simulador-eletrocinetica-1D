@@ -3,7 +3,7 @@ from modelo.solo import Solo
 from modelo.especie_quimica import EspecieQuimica
 from modelo.condicoes import CondicoesDoProblema
 from modelo.celula_experimental import CelulaExperimental
-from exceptions.especie_quimica_exception import EspecieQuimicaMalConfigurada
+from exceptions.especie_quimica_duplicada import EspecieQuimicaMalConfigurada
 
 class Simulacao():
 

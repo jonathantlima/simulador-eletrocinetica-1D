@@ -1,7 +1,7 @@
 from view.tela_especie_quimica import TelaEspecieQuimica
 from modelo.especie_quimica import EspecieQuimica
 from DAOs.especie_quimica_dao import EspecieQuimicaDAO
-from exceptions.especie_quimica_exception import EspecieQuimicaDuplicada
+from exceptions.especie_quimica_duplicada import EspecieQuimicaDuplicada
 from modelo.anion import Anion
 from modelo.cation import Cation
 

@@ -88,8 +88,7 @@ class TelaEspecieQuimica():
         headings = ['Código', 'Nome', 'Fórmula', 'Função', 'Valência', 'Coeficiente de distribuição (kg/L)', 'Coeficiente de difusão (m²/h)']
         layout = [ [sg.Table(values=especies, headings=headings, key='-TABLE-', 
                              auto_size_columns=True, display_row_numbers=False, 
-                             justification='right', enable_events=True,
-                             alternating_row_color='lightblue')],
+                             justification='right', enable_events=True)],
                               [sg.Button('Ok'), sg.Button('Cancel')] ]
         event, values = sg.Window(title, layout).read(close=True)
 
