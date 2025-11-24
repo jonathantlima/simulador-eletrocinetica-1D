@@ -1,6 +1,7 @@
 from view.tela_usuario import TelaUsuario
 from modelo.usuario import Usuario
 from DAOs.usuarios_dao import UsuarioDAO
+from exceptions.usuario_exception import UsuarioDuplicado
 
 
 class ControladorUsuario():
@@ -42,7 +43,7 @@ class ControladorUsuario():
 
             for usuario in self.__usuarios_dao.get_all():
                 if (usuario.matricula == dados['matricula']):
-                    self.__tela.imprime_mensagem(f"Usuário de matrícula {usuario.matricula} já existe.")
+                    raise UsuarioDuplicado()
                     return None
 
             novo_usuario = Usuario(

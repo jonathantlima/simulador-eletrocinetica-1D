@@ -1,6 +1,7 @@
 from view.tela_especie_quimica import TelaEspecieQuimica
 from modelo.especie_quimica import EspecieQuimica
 from DAOs.especie_quimica_dao import EspecieQuimicaDAO
+from exceptions.especie_quimica_exception import EspecieQuimicaDuplicada
 from modelo.anion import Anion
 from modelo.cation import Cation
 
@@ -75,7 +76,7 @@ class ControladorEspecieQuimica():
 
             for especie in self.__especies_dao.get_all():
                 if (especie.codigo == dados['codigo']):
-                    self.__tela.imprime_mensagem(f"Espécie química código {especie.codigo} já existe.")
+                    raise EspecieQuimicaDuplicada()
                     return None
 
             if dados['valencia'] > 0:
