@@ -7,7 +7,6 @@ class ControladorUsuario():
 
     def __init__(self, controlador_sistema):
         self.__tela = TelaUsuario()
-        #self.__usuarios = []
         self.__usuarios_dao = UsuarioDAO()
         self.__controlador_sistema = controlador_sistema
 
