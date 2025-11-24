@@ -12,7 +12,7 @@ class ControladorSimulacao():
         self.__controlador_sistema = controlador_sistema
         # Adicionado para manter a lista de simulações em memória,
         # pois o DAO armazena em disco, mas o código original usa uma lista em memória para listagem e plotagem.
-        self.__simulacoes = list(self.__simulacoes_dao.get_all())
+        self.__simulacoes_dao = SimulacaoDAO()
     
     def abre_tela(self):
         opcoes = {1: self.cria_simulacao,
@@ -60,24 +60,14 @@ class ControladorSimulacao():
         except Exception as e:
             self.__tela.imprime_mensagem(f"Falha ao coletar dados: {e}")
             return # Adicionado return para evitar prosseguir com dados incompletos
+        
+        for simulacao in self.__simulacoes_dao.get_all():
+                if (simulacao.codigo == codigo_simulacao):
+                    self.__tela.imprime_mensagem(f"Simulação código {simulacao.codigo} já existe.")
+                    return None
 
         # DEFINE USUÁRIO
-        try:
-            # Lista usuários
-            self.__controlador_sistema.controlador_usuario.lista_usuarios()
-
-            # Loop para garantir matrícula válida
-            usuario = None
-            while usuario is None:
-                matricula = self.__tela.coleta_matricula_usuario()
-                usuario = self.__controlador_sistema.controlador_usuario.retorna_usuario(matricula)
-                if usuario is None:
-                    self.__tela.imprime_mensagem("Matrícula inválida. Tente novamente.")
-            self.__tela.imprime_mensagem(f"Usuário selecionado: {usuario.nome}\n")
-
-        except Exception as e:
-            self.__tela.imprime_mensagem(f"Erro ao selecionar usuário: {e}")
-            return
+        usuario = self.__controlador_sistema.controlador_usuario.retorna_usuario()
 
         # DEFINE O SOLO QUE SERÁ USADO
         solo = self.__controlador_sistema.controlador_solo.retorna_solo()
@@ -106,20 +96,24 @@ class ControladorSimulacao():
         
         # Salva no DAO e adiciona à lista em memória
         self.__simulacoes_dao.add(simulacao)
-        self.__simulacoes.append(simulacao)
 
         self.__tela.imprime_mensagem(f"Simulação {codigo_simulacao} criada com sucesso!")
         return simulacao
     
+    @property
+    def simulacoes_dao(self):
+        return self.__simulacoes_dao
+    
     def lista_simulacoes(self):
-        self.__tela.imprime_mensagem("--- Código --- Usuário --- Duração (horas) ---")
-        for simulacao in self.__simulacoes:
-            print(simulacao.codigo, simulacao.usuario.nome, simulacao.duracao)
+        simulacoes = []
+        for simulacao in self.__simulacoes_dao.get_all():
+            simulacoes.append([simulacao.usuario.matricula, simulacao.codigo, simulacao.duracao, simulacao.solo.codigo, simulacao.especie_quimica.codigo, simulacao.celula_experimental.codigo, simulacao.condicoes_do_problema.codigo])
+        self.__tela.exibe_simulacoes(simulacoes)
     
     def plota_grafico(self):
         self.lista_simulacoes()
-        codigo = self.__tela.coleta_codigo_simulacao()
-        for simulacao in self.__simulacoes:
+        codigo = self.__tela.coleta_codigo()
+        for simulacao in self.__simulacoes_dao.get_all():
             if (simulacao.codigo == codigo):
                 Conc = simulacao.concentracoes
                 incremento_espacial = 0.125
@@ -182,17 +176,12 @@ class ControladorSimulacao():
             print(f"Erro ao gerar relatório: {e}")
     
     def deleta_simulacao(self):
-        self.lista_simulacoes()
-        codigo = self.__tela.coleta_codigo_simulacao()
-        simulacao_encontrada = None
-        for simulacao in self.__simulacoes:
-            if simulacao.codigo == codigo:
-                simulacao_encontrada = simulacao
-                break
-        
-        if simulacao_encontrada:
-            self.__simulacoes_dao.remove(codigo)
-            self.__simulacoes.remove(simulacao_encontrada)
-            self.__tela.imprime_mensagem(f"Simulação {codigo} excluída com sucesso.")
-        else:
-            self.__tela.imprime_mensagem("Simulação não cadastrada ou código incorreto.")
+        try:
+            self.lista_simulacoes()
+            codigo = self.__tela.coleta_codigo()
+            for simulacao in self.__simulacoes_dao.get_all():
+                if (simulacao.codigo == codigo):
+                    self.__simulacoes_dao.remove(simulacao.codigo)
+                    self.__tela.imprime_mensagem(f"Simulação {simulacao.codigo} excluída com sucesso.")
+        except Exception as e:
+            self.__tela.imprime_mensagem(f"Erro {e} ao tentar excluir a simulação {codigo}.")

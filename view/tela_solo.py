@@ -91,8 +91,11 @@ class TelaSolo():
         return codigo
     
     def exibe_solos(self, solos, title="---Lista de Solos---"):
-        layout = [ [sg.Listbox(solos, size=(60, 12), key="-LISTBOX-", horizontal_scroll=True)],
-              [sg.Button('Ok'), sg.Button('Cancel')] ]
+        headings = ['Código', 'Tipo', 'Origem', 'Cor', 'Porosidade', 'Massa específica seca (g/cm³)', 'Condutividade hidráulica (m/m)', 'Permeabilidade eletro-osmótica (m²/V.s)']
+        layout = [ [sg.Table(values=solos, headings=headings, key='-TABLE-',
+                             auto_size_columns=True, display_row_numbers=False, 
+                             justification='right', enable_events=True)],
+                              [sg.Button('Ok'), sg.Button('Cancel')] ]
         event, values = sg.Window(title, layout).read(close=True)
 
         if event == "Ok":

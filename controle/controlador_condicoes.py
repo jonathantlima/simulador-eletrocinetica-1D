@@ -69,6 +69,11 @@ class ControladorCondicoes():
         try:
             dados = self.__tela.coleta_dados()
 
+            for condicao in self.__condicoes_dao.get_all():
+                if (condicao.codigo == dados['codigo']):
+                    self.__tela.imprime_mensagem(f"Condições inicial e de contorno código {condicao.codigo} já existe.")
+                    return None
+
             condicao = CondicoesDoProblema(dados['codigo'],
                                        dados['concentracao_inicial'],
                                        dados['gradiente_eletrico'],

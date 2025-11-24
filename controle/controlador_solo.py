@@ -45,9 +45,7 @@ class ControladorSolo():
     def mostra_solos(self):        
         dados_solos = []
         for solo in self.__solos_dao.get_all():
-            dados_solos.append(f"Código: {solo.codigo}, Tipo: {solo.tipo}, Origem: {solo.origem}, Cor: {solo.cor}, Porosidade: {solo.porosidade}, Massa específica seca (kg/L): {solo.massa_especifica_seca}, Condutividade hidráulica (m/m): {solo.condutividade_hidraulica}, Permeabilidade eletro-osmótica (m2/V.s): {solo.permeabilidade_eletroosmotica}"
-                #{"Matrícula:": usuario.matricula, "Nome:": usuario.nome, "E-mail:":usuario.email, "Telefone:": usuario.telefone, "Departamento:": usuario.departamento}
-                )
+            dados_solos.append([solo.codigo, solo.tipo, solo.origem, solo.cor, solo.porosidade, solo.massa_especifica_seca, solo.condutividade_hidraulica, solo.permeabilidade_eletroosmotica])
         self.__tela.exibe_solos(dados_solos)
     
     def alterar_solo(self):
@@ -73,6 +71,11 @@ class ControladorSolo():
     def cadastra_solo(self):
         try:
             dados = self.__tela.coleta_dados()
+
+            for solo in self.__solo_dao.get_all():
+                if (solo.codigo == dados['codigo']):
+                    self.__tela.imprime_mensagem(f"Solo código {solo.codigo} já existe.")
+                    return None
 
             if dados['tipo'].strip().lower() == "areia":
                 solo = Areia(codigo=dados['codigo'],

@@ -41,6 +41,11 @@ class ControladorUsuario():
         try:
             dados = self.__tela.coleta_dados()
 
+            for usuario in self.__usuarios_dao.get_all():
+                if (usuario.matricula == dados['matricula']):
+                    self.__tela.imprime_mensagem(f"Usuário de matrícula {usuario.matricula} já existe.")
+                    return None
+
             novo_usuario = Usuario(
                 dados["nome"],
                 dados["email"],
@@ -76,19 +81,20 @@ class ControladorUsuario():
 
         return usuario
 
-    def retorna_usuario(self, matricula):
-        for usuario in self.__usuarios_dao.get_all():
-            if (usuario.matricula == matricula):
-                return usuario
-        else:
-            self.__tela.imprime_mensagem("Usuário não cadastrado ou matrícula incorreta.\n")
+    def retorna_usuario(self):
+        try:
+            self.lista_usuarios()
+            matricula = self.__tela.coleta_matricula_usuario()
+            for usuario in self.__usuarios_dao.get_all():
+                if (usuario.matricula == matricula):
+                    return usuario
+        except Exception as e:
+            self.__tela.imprime_mensagem(f"Erro {e} ao tentar retornar usuário de matrícula {matricula}.")
     
     def lista_usuarios(self):
         dados_usuarios = []
         for usuario in self.__usuarios_dao.get_all():
-            dados_usuarios.append(f"Matrícula: {usuario.matricula}, Nome: {usuario.nome}, E-mail: {usuario.email}, Telefone: {usuario.telefone}, Departamento: {usuario.departamento}"
-                #{"Matrícula:": usuario.matricula, "Nome:": usuario.nome, "E-mail:":usuario.email, "Telefone:": usuario.telefone, "Departamento:": usuario.departamento}
-                )
+            dados_usuarios.append([usuario.matricula, usuario.nome, usuario.email, usuario.telefone, usuario.departamento])
         self.__tela.mostra_usuarios(dados_usuarios)
 
     def deleta_usuario(self):

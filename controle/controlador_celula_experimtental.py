@@ -46,7 +46,7 @@ class ControladorCelulaExperimental():
     def mostra_celulas(self):
         dados_celulas = []
         for cell in self.__celulas_dao.get_all():
-            dados_celulas.append(f"Código: {cell.codigo}, Material: {cell.material}, Comprimento: {cell.comprimento}, Diametro: {cell.diametro}")
+            dados_celulas.append([cell.codigo, cell.material, cell.comprimento, cell.diametro])
         self.__tela.exibe_celulas(dados_celulas)
 
     def altera_celula(self):
@@ -67,6 +67,11 @@ class ControladorCelulaExperimental():
     def cadastra_celula(self):
         try:
             dados = self.__tela.coleta_dados()
+
+            for celula in self.__celulas_dao.get_all():
+                if (celula.codigo == dados['codigo']):
+                    self.__tela.imprime_mensagem(f"Célula experimental código {celula.codigo} já existe.")
+                    return None
 
             celula = CelulaExperimental(codigo=dados['codigo'],
                                     material=dados['material'],

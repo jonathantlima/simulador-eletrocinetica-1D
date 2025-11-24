@@ -18,6 +18,8 @@ class TelaSimulacao():
             opcao = 3
         if values['4']:
             opcao = 4
+        if values['5']:
+            opcao = 5
         # cobre os casos de Retornar, fechar janela, ou clicar cancelar
         #Isso faz com que retornemos a tela do sistema caso qualquer uma dessas coisas aconteca
         if values['0'] or button in (None, 'Cancelar'):
@@ -59,30 +61,35 @@ class TelaSimulacao():
         self.close()
         return codigo, duracao
     
-    
-    def coleta_codigo_solo(self):
-        codigo = input("Digite o código do solo para simulação: ")
-        return codigo
-    
-    def coleta_codigo_especie_quimica(self):
-        codigo = input("Digite o código da espécie química: ")
-        return codigo
-    
-    def coleta_codigo_celula(self):
-        codigo = input("Digite o código da célula experimental deseja: ")
-        return codigo
+    def exibe_simulacoes(self, condicoes, title="-Lista de simulações-"):
+        headings = ['Usuário', 'Código', 'Duração (horas)', 'Solo', 'Espécie Química', 'Célula Experimental', 'Condição inicial e de contorno']
+        layout = [ [sg.Table(values=condicoes, headings=headings, key='-TABLE-',
+                             auto_size_columns=True, display_row_numbers=False, 
+                             justification='right', enable_events=True,
+                             alternating_row_color='lightblue')],
+                              [sg.Button('Ok'), sg.Button('Cancel')] ]
+        event, values = sg.Window(title, layout).read(close=True)
 
-    def coleta_codigo_condicoes(self):
-        codigo = input("Digite o código da condição de simulação: ")
+        if event == "Ok":
+            try:
+                return values["-LISTBOX-"][0]
+            except:
+                return None
+        else:
+            return None
+
+    def coleta_codigo(self):
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text('-------- DADOS DA SIMULAÇÃO ----------', font=("Courrier", 20))],
+            [sg.Text('Código da simulação:', size=(15, 1)), sg.InputText('', key='codigo')],
+            [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
+        ]
+        self.__window = sg.Window('Cadastro de simulações').Layout(layout)
+        button, values = self.open()
+        codigo = values['codigo']
+        self.close()
         return codigo
-    
-    def coleta_codigo_simulacao(self):
-        codigo = input("Digite o código da simulação desejada: ")
-        return codigo
-    
-    def coleta_matricula_usuario(self):
-        matricula = input("Digite a matricula do usuário: ")
-        return matricula
     
     def plotagem(self, m, incremento_espacial, incremento_temporal, comprimento, duracao, C):
         try:

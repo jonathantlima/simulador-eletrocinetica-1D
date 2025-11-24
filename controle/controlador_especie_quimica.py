@@ -73,6 +73,11 @@ class ControladorEspecieQuimica():
         try:
             dados = self.__tela.coleta_dados()
 
+            for especie in self.__especies_dao.get_all():
+                if (especie.codigo == dados['codigo']):
+                    self.__tela.imprime_mensagem(f"Espécie química código {especie.codigo} já existe.")
+                    return None
+
             if dados['valencia'] > 0:
                 especie = Cation(codigo=dados['codigo'],
                                  nome=dados['nome'],

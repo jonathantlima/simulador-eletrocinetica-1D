@@ -73,8 +73,11 @@ class TelaCelulas():
         return codigo
 
     def exibe_celulas(self, cells, title="---Lista de Usuários---"):
-        layout = [ [sg.Listbox(cells, size=(60, 12), key="-LISTBOX-", horizontal_scroll=True)],
-              [sg.Button('Ok'), sg.Button('Cancel')] ]
+        headings = ['Código', 'Material', 'Comprimento (cm)', 'Diâmetro (cm)']
+        layout = [ [sg.Table(values=cells, headings=headings, key='-TABLE-',
+                                    auto_size_columns=True, display_row_numbers=False, 
+                                    justification='right', enable_events=True)],
+                                    [sg.Button('Ok'), sg.Button('Cancel')] ]
         event, values = sg.Window(title, layout).read(close=True)
 
         if event == "Ok":
