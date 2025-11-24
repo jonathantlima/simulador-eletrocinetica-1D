@@ -51,6 +51,7 @@ class ControladorEspecieQuimica():
         for especie in self.__especies_dao.get_all():
             especies.append([especie.codigo, especie.nome, especie.formula, especie.funcao, especie.valencia, especie.coeficiente_de_distribuicao, especie.coeficiente_de_difusao])
         self.__tela.exibe_especies(especies)
+        return especies
             
     def altera_especie(self):
         self.mostra_especies()

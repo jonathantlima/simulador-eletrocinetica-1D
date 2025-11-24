@@ -48,6 +48,7 @@ class ControladorCelulaExperimental():
         for cell in self.__celulas_dao.get_all():
             dados_celulas.append([cell.codigo, cell.material, cell.comprimento, cell.diametro])
         self.__tela.exibe_celulas(dados_celulas)
+        return dados_celulas
 
     def altera_celula(self):
         self.mostra_celulas()

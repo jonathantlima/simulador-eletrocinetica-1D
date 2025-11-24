@@ -1,38 +1,21 @@
-************ RELATÓRIO DE SIMULAÇÕES ***************
+**************************************************
+************ RELATÓRIO DE ESTATÍSTICAS ***********
+**************************************************
 
+--- ENTIDADES MAIS UTILIZADAS ---
 
---- Duração das Simulações ---
+1. Usuário mais ativo (Matrícula): 25102233 (2 simulação(ões))
+2. Célula Experimental mais simulada (Código): CELL-100 (1 simulação(ões))
+3. Solo mais usado (Código): CH-001 (1 simulação(ões))
+4. Condição mais usada (Código): CIC-118 (1 simulação(ões))
 
-100: 1 simulação(ões) s
+--- ESTATÍSTICAS DESCRITIVAS DA DURAÇÃO (em horas) ---
 
+- Total de Simulações: 2
+- Média (h): 125.00
+- Mediana (h): 125.00
+- Desvio Padrão (h): 25.00
+- Mínimo (h): 100
+- Máximo (h): 150
 
-
---- Simulações por Usuário (matrícula) ---
-
-24207006: 1 simulação(ões)
-
-
-
---- Simulações por Solo ---
-
-CH-001: 1 simulação(ões)
-
-
-
---- Simulações por Célula Experimental ---
-
-CELL-100: 1 simulação(ões)
-
-
-
---- Simulações por Espécie Química ---
-
-ES-1001: 1 simulação(ões)
-
-
-
---- Concentração Inicial (mg/L) ---
-
-5.8: 1 simulação(ões)
-
-
+**************************************************

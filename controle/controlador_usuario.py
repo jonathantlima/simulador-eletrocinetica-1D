@@ -96,6 +96,7 @@ class ControladorUsuario():
         for usuario in self.__usuarios_dao.get_all():
             dados_usuarios.append([usuario.matricula, usuario.nome, usuario.email, usuario.telefone, usuario.departamento])
         self.__tela.mostra_usuarios(dados_usuarios)
+        return dados_usuarios
 
     def deleta_usuario(self):
         self.lista_usuarios()

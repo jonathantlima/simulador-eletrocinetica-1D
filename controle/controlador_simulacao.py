@@ -129,51 +129,114 @@ class ControladorSimulacao():
         self.__controlador_sistema.abre_tela()
     
     def gerar_relatorio(self):
-
-        # Será usada para armazenar as durações das simulações e calcular estatísticas
-        duracao_dict = dict()
-        usuarios_dict = dict()
-        solos_dict = dict()
-        celulas_dict = dict()
-        especies_dict = dict()
-        concentracao_inicial = dict()   # coluna, flushing
-
-        for simulacao in self.__simulacoes:
-            duracao_dict[simulacao.duracao] = duracao_dict.get(simulacao.duracao, 0) + 1
-            usuarios_dict[simulacao.usuario.matricula] = usuarios_dict.get(simulacao.usuario.matricula, 0) + 1
-            solos_dict[simulacao.solo.codigo] = solos_dict.get(simulacao.solo.codigo, 0) + 1
-            celulas_dict[simulacao.celula_experimental.codigo] = celulas_dict.get(simulacao.celula_experimental.codigo, 0) + 1
-            especies_dict[simulacao.especie_quimica.codigo] = especies_dict.get(simulacao.especie_quimica.codigo, 0) + 1
-            concentracao_inicial[simulacao.condicoes_do_problema.concentracao_inicial] = concentracao_inicial.get(simulacao.condicoes_do_problema.concentracao_inicial, 0) + 1
+        """
+        Gera um relatório de estatísticas das simulações cadastradas.
+        O relatório inclui:
+        1. O usuário que realizou mais simulações.
+        2. A célula experimental mais simulada.
+        3. O solo mais usado.
+        4. A condição mais usada (usando o código da condição).
+        5. Estatísticas descritivas da duração das simulações.
+        """
+        simulacoes = list(self.__simulacoes_dao.get_all())
         
-        # Início do conteúdo do relatório
+        if not simulacoes:
+            self.__tela.imprime_mensagem("Não há simulações cadastradas para gerar o relatório.")
+            return
+
+        # 1. Coleta de dados
+        duracoes = []
+        usuarios_contagem = {}
+        solos_contagem = {}
+        celulas_contagem = {}
+        condicoes_contagem = {}
+
+        for simulacao in simulacoes:
+            # Assume-se que 'duracao' é um número (float ou int)
+            duracoes.append(simulacao.duracao)
+            
+            # Contagem de entidades (usando a matrícula/código conforme o usuário informou)
+            usuario_id = simulacao.usuario.matricula
+            celula_id = simulacao.celula_experimental.codigo
+            solo_id = simulacao.solo.codigo
+            # A condição é acessada via condicoes_do_problema, e o código é o identificador
+            condicao_id = simulacao.condicoes_do_problema.codigo 
+
+            usuarios_contagem[usuario_id] = usuarios_contagem.get(usuario_id, 0) + 1
+            celulas_contagem[celula_id] = celulas_contagem.get(celula_id, 0) + 1
+            solos_contagem[solo_id] = solos_contagem.get(solo_id, 0) + 1
+            condicoes_contagem[condicao_id] = condicoes_contagem.get(condicao_id, 0) + 1
+
+        # 2. Funções Auxiliares para Análise
+        def encontrar_mais_usado(contagem_dict):
+            if not contagem_dict:
+                return "N/A", 0
+            mais_usado = max(contagem_dict, key=contagem_dict.get)
+            contagem = contagem_dict[mais_usado]
+            return mais_usado, contagem
+
+        # 3. Cálculo das Estatísticas Descritivas (usando numpy para robustez)
+        try:
+            import numpy as np
+            estatisticas = {
+                "Total de Simulações": len(duracoes),
+                "Média (h)": np.mean(duracoes),
+                "Mediana (h)": np.median(duracoes),
+                "Desvio Padrão (h)": np.std(duracoes),
+                "Mínimo (h)": np.min(duracoes),
+                "Máximo (h)": np.max(duracoes),
+            }
+        except ImportError:
+            # Fallback simples caso numpy não esteja disponível (embora seja padrão no ambiente)
+            estatisticas = {
+                "Total de Simulações": len(duracoes),
+                "Média (h)": sum(duracoes) / len(duracoes) if duracoes else 0,
+                "Mínimo (h)": min(duracoes) if duracoes else 0,
+                "Máximo (h)": max(duracoes) if duracoes else 0,
+            }
+            self.__tela.imprime_mensagem("Aviso: numpy não encontrado. Estatísticas descritivas limitadas.")
+
+
+        # 4. Geração do Conteúdo do Relatório
         linhas = []
-        linhas.append("************ RELATÓRIO DE SIMULAÇÕES ***************\n")
+        linhas.append("**************************************************")
+        linhas.append("************ RELATÓRIO DE ESTATÍSTICAS ***********")
+        linhas.append("**************************************************\n")
 
-        def formatar_secao(titulo, dicionario, unidade=None):
-            linhas.append(f"\n--- {titulo} ---\n")
-            for chave, valor in dicionario.items():
-                unidade_str = f" {unidade}" if unidade else ""
-                linhas.append(f"{str(chave)}: {valor} simulação(ões){unidade_str}")
-            linhas.append("\n")
+        # Seção 1: Entidades Mais Usadas
+        linhas.append("--- ENTIDADES MAIS UTILIZADAS ---\n")
+        
+        usuario_mais_ativo, contagem_usuario = encontrar_mais_usado(usuarios_contagem)
+        linhas.append(f"1. Usuário mais ativo (Matrícula): {usuario_mais_ativo} ({contagem_usuario} simulação(ões))")
 
-        # Adiciona todas as seções ao relatório
-        formatar_secao("Duração das Simulações", duracao_dict, "s")
-        formatar_secao("Simulações por Usuário (matrícula)", usuarios_dict)
-        formatar_secao("Simulações por Solo", solos_dict)
-        formatar_secao("Simulações por Célula Experimental", celulas_dict)
-        formatar_secao("Simulações por Espécie Química", especies_dict)
-        formatar_secao("Concentração Inicial (mg/L)", concentracao_inicial)
+        celula_mais_usada, contagem_celula = encontrar_mais_usado(celulas_contagem)
+        linhas.append(f"2. Célula Experimental mais simulada (Código): {celula_mais_usada} ({contagem_celula} simulação(ões))")
 
-        # Salvando o arquivo
+        solo_mais_usado, contagem_solo = encontrar_mais_usado(solos_contagem)
+        linhas.append(f"3. Solo mais usado (Código): {solo_mais_usado} ({contagem_solo} simulação(ões))")
+
+        condicao_mais_usada, contagem_condicao = encontrar_mais_usado(condicoes_contagem)
+        linhas.append(f"4. Condição mais usada (Código): {condicao_mais_usada} ({contagem_condicao} simulação(ões))\n")
+
+        # Seção 2: Estatísticas Descritivas da Duração
+        linhas.append("--- ESTATÍSTICAS DESCRITIVAS DA DURAÇÃO (em horas) ---\n")
+        for chave, valor in estatisticas.items():
+            # Formata o valor para 2 casas decimais, exceto para o total
+            valor_formatado = f"{valor:.2f}" if isinstance(valor, (float, np.float64)) else str(valor)
+            linhas.append(f"- {chave}: {valor_formatado}")
+        
+        linhas.append("\n**************************************************")
+
+        # 5. Salvando o arquivo
         caminho_arquivo = "relatorio_simulacoes.txt"
         try:
+            # O arquivo será salvo no diretório do projeto (simulador-eletrocinetica-1D)
             with open(caminho_arquivo, "w", encoding="utf-8") as f:
-                for linha in linhas:
-                    f.write(linha + "\n")
-            print(f"Relatório gerado com sucesso em: {caminho_arquivo}")
+                f.write("\n".join(linhas))
+            
+            self.__tela.imprime_mensagem(f"Relatório gerado com sucesso em: {caminho_arquivo}")
         except Exception as e:
-            print(f"Erro ao gerar relatório: {e}")
+            self.__tela.imprime_mensagem(f"Erro ao gerar relatório: {e}")
     
     def deleta_simulacao(self):
         try:

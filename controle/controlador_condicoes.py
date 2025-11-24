@@ -48,6 +48,7 @@ class ControladorCondicoes():
         for condicao in self.__condicoes_dao.get_all():
             condicoes.append([condicao.codigo, condicao.concentracao_inicial, condicao.gradiente_eletrico, condicao.gradiente_hidraulico, condicao.concentracao_reservatorio])
         self.__tela.exibe_condicoes(condicoes)
+        return condicoes
     
     def altera_condicoes(self):
         self.mostra_condicoes()
