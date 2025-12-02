@@ -100,8 +100,8 @@ class ControladorUsuario():
 
     def deleta_usuario(self):
         self.lista_usuarios()
-        matricula = self.__tela.coleta_matricula_usuario()
-        usuario = self.retorna_usuario(matricula)
+        #matricula = self.__tela.coleta_matricula_usuario()
+        usuario = self.retorna_usuario()
 
         if (usuario is not None):
             self.__usuarios_dao.remove(usuario.matricula)
